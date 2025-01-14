@@ -8,8 +8,8 @@ package chess;
  */
 public class ChessMove {
 
-    private ChessPosition startPosition;
-    private ChessPosition endPosition;
+    private final ChessPosition startPosition;
+    private final ChessPosition endPosition;
     private ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
@@ -40,6 +40,6 @@ public class ChessMove {
      * @return Type of piece to promote a pawn to, or null if no promotion
      */
     public ChessPiece.PieceType getPromotionPiece() {
-        return promotionPiece;
+        return promotionPiece = null;
     }
 }

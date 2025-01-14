@@ -10,8 +10,8 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
-    private ChessGame.TeamColor pieceColor;
-    private ChessPiece.PieceType pieceType;
+    private final ChessGame.TeamColor pieceColor;
+    private final ChessPiece.PieceType pieceType;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.pieceColor = pieceColor;
