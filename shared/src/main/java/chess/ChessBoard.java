@@ -11,10 +11,10 @@ import java.util.Objects;
  */
 public class ChessBoard {
 
-    private final ChessPiece[][] squares = new ChessPiece[8][8];
+    private ChessPiece[][] squares;
 
     public ChessBoard() {
-
+        squares = new ChessPiece[8][8];
     }
 
     /**
@@ -38,12 +38,36 @@ public class ChessBoard {
         return squares[position.getRow()-1][position.getColumn()-1];
     }
 
+    private void setSideOfBoard(ChessGame.TeamColor team, int row, int offset) {
+        squares[row][0] = new ChessPiece(team, ChessPiece.PieceType.ROOK);
+        squares[row][1] = new ChessPiece(team, ChessPiece.PieceType.KNIGHT);
+        squares[row][2] = new ChessPiece(team, ChessPiece.PieceType.BISHOP);
+        squares[row][3] = new ChessPiece(team, ChessPiece.PieceType.QUEEN);
+        squares[row][4] = new ChessPiece(team, ChessPiece.PieceType.KING);
+        squares[row][5] = new ChessPiece(team, ChessPiece.PieceType.BISHOP);
+        squares[row][6] = new ChessPiece(team, ChessPiece.PieceType.KNIGHT);
+        squares[row][7] = new ChessPiece(team, ChessPiece.PieceType.ROOK);
+
+        row += offset;
+
+        squares[row][0] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+        squares[row][1] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+        squares[row][2] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+        squares[row][3] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+        squares[row][4] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+        squares[row][5] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+        squares[row][6] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+        squares[row][7] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        squares = new ChessPiece[8][8];
+        setSideOfBoard(ChessGame.TeamColor.WHITE, 0, 1);
+        setSideOfBoard(ChessGame.TeamColor.BLACK, 7, -1);
     }
 
     @Override
