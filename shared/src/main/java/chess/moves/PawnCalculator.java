@@ -1,9 +1,6 @@
 package chess.moves;
 
-import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +8,22 @@ import java.util.Collection;
 import static chess.ChessGame.TeamColor.WHITE;
 
 public class PawnCalculator implements PieceMovesCalculator {
+
+    private void addMoves(ChessGame.TeamColor team, ChessPosition startPosition, ChessPosition endPosition, Collection<ChessMove> validMoves) {
+        if ((team == WHITE && endPosition.getRow() == 8) || (team == ChessGame.TeamColor.BLACK && endPosition.getRow() == 1)) {
+            ChessMove move = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN);
+            validMoves.add(move);
+            move = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP);
+            validMoves.add(move);
+            move = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT);
+            validMoves.add(move);
+            move = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK);
+            validMoves.add(move);
+        } else {
+            ChessMove move = new ChessMove(startPosition, endPosition, null);
+            validMoves.add(move);
+        }
+    }
 
     private void getValidPawnForward(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition, int rowChange, int colChange, boolean recursive, Collection<ChessMove> validMoves) {
 
@@ -20,8 +33,7 @@ public class PawnCalculator implements PieceMovesCalculator {
             ChessPosition nextPosition = new ChessPosition(nextRow, nextCol);
             ChessPiece nextSquarePiece = board.getPiece(nextPosition);
             if (nextSquarePiece == null) {
-                ChessMove move = new ChessMove(startPosition, nextPosition, null);
-                validMoves.add(move);
+                addMoves(board.getPiece(startPosition).getTeamColor(), startPosition, nextPosition, validMoves);
                 if (recursive) {
                     getValidMoves(board, startPosition, nextPosition, rowChange, colChange, recursive, validMoves);
                 }
@@ -37,18 +49,18 @@ public class PawnCalculator implements PieceMovesCalculator {
             ChessPosition nextPosition = new ChessPosition(nextRow, nextCol);
             ChessPiece nextSquarePiece = board.getPiece(nextPosition);
             if ((nextSquarePiece != null) && (nextSquarePiece.getTeamColor() != (board.getPiece(startPosition)).getTeamColor())) {
-                ChessMove move = new ChessMove(startPosition, nextPosition, null);
-                validMoves.add(move);
-                if (recursive) {
-                    getValidPawnCaptures(board, startPosition, myPosition, rowChange, -1, false, validMoves);
-                }
+                addMoves(board.getPiece(startPosition).getTeamColor(), startPosition, nextPosition, validMoves);
             }
+        }
+        if (recursive) {
+            getValidPawnCaptures(board, startPosition, myPosition, rowChange, -1, false, validMoves);
         }
     }
 
     private void whitePawn(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves) {
         getValidPawnForward(board, myPosition, myPosition, 1, 0, false, validMoves);
-        if (myPosition.getRow() == 2) {
+        ChessPosition nextForward = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn());
+        if (myPosition.getRow() == 2 && inBoard(nextForward.getRow(), nextForward.getColumn()) && board.getPiece(nextForward) == null) {
             getValidPawnForward(board, myPosition, myPosition, 2, 0, false, validMoves);
         }
         getValidPawnCaptures(board, myPosition, myPosition, 1, 1, true, validMoves);
@@ -56,7 +68,8 @@ public class PawnCalculator implements PieceMovesCalculator {
 
     private void blackPawn(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves) {
         getValidPawnForward(board, myPosition, myPosition, -1, 0, false, validMoves);
-        if (myPosition.getRow() == 7) {
+        ChessPosition nextForward = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
+        if (myPosition.getRow() == 7 && inBoard(nextForward.getRow(), nextForward.getColumn()) && board.getPiece(nextForward) == null) {
             getValidPawnForward(board, myPosition, myPosition, -2, 0, false, validMoves);
         }
         getValidPawnCaptures(board, myPosition, myPosition, -1, 1, true, validMoves);
