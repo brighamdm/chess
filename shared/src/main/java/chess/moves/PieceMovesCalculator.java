@@ -9,7 +9,7 @@ import java.util.Collection;
 
 public interface PieceMovesCalculator {
 
-    private boolean inBoard(int row, int col) {
+    default boolean inBoard(int row, int col) {
         boolean result = true;
         if ((row < 1) || (row > 8)) {
             result = false;
