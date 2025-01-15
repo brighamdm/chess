@@ -25,7 +25,8 @@ public class PawnCalculator implements PieceMovesCalculator {
         }
     }
 
-    private void getValidPawnForward(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition, int rowChange, Collection<ChessMove> validMoves) {
+    private void getValidPawnForward(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition,
+                                     int rowChange, Collection<ChessMove> validMoves) {
 
         int nextRow = myPosition.getRow() + rowChange;
         int nextCol = myPosition.getColumn();
@@ -38,7 +39,8 @@ public class PawnCalculator implements PieceMovesCalculator {
         }
     }
 
-    private void getValidPawnCaptures(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition, int rowChange, int colChange, boolean recursive, Collection<ChessMove> validMoves) {
+    private void getValidPawnCaptures(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition,
+                                      int rowChange, int colChange, boolean recursive, Collection<ChessMove> validMoves) {
 
         int nextRow = myPosition.getRow() + rowChange;
         int nextCol = myPosition.getColumn() + colChange;

@@ -19,7 +19,8 @@ public interface PieceMovesCalculator {
         return result;
     }
 
-    default void getValidMoves(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition, int rowChange, int colChange, boolean recursive, Collection<ChessMove> validMoves) {
+    default void getValidMoves(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition,
+                               int rowChange, int colChange, boolean recursive, Collection<ChessMove> validMoves) {
 
         int nextRow = myPosition.getRow() + rowChange;
         int nextCol = myPosition.getColumn() + colChange;
