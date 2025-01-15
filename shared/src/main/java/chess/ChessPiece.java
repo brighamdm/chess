@@ -1,5 +1,7 @@
 package chess;
 
+import chess.moves.*;
+
 import java.util.Collection;
 
 /**
@@ -11,9 +13,9 @@ import java.util.Collection;
 public class ChessPiece {
 
     private final ChessGame.TeamColor pieceColor;
-    private final ChessPiece.PieceType pieceType;
+    private final PieceType pieceType;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.pieceType = type;
     }
@@ -52,6 +54,34 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> validMoves;
+        switch(pieceType) {
+            case KING -> {
+                PieceMovesCalculator calculator = new KingCalculator();
+                validMoves = calculator.pieceMoves(board, myPosition);
+            }
+            case QUEEN -> {
+                PieceMovesCalculator calculator = new QueenCalculator();
+                validMoves = calculator.pieceMoves(board, myPosition);
+            }
+            case BISHOP -> {
+                PieceMovesCalculator calculator = new BishopCalculator();
+                validMoves = calculator.pieceMoves(board, myPosition);
+            }
+            case KNIGHT -> {
+                PieceMovesCalculator calculator = new KnightCalculator();
+                validMoves = calculator.pieceMoves(board, myPosition);
+            }
+            case ROOK -> {
+                PieceMovesCalculator calculator = new RookCalculator();
+                validMoves = calculator.pieceMoves(board, myPosition);
+            }
+            case PAWN -> {
+                PieceMovesCalculator calculator = new PawnCalculator();
+                validMoves = calculator.pieceMoves(board, myPosition);
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + pieceType);
+        }
+        return validMoves;
     }
 }
