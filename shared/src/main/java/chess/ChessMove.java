@@ -46,6 +46,14 @@ public class ChessMove {
         return promotionPiece;
     }
 
+    public boolean isEndPosition(ChessPosition myPosition) {
+        boolean result = false;
+        if (myPosition == endPosition) {
+            result = true;
+        }
+        return result;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {

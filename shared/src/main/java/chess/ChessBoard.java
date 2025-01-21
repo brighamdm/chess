@@ -17,6 +17,15 @@ public class ChessBoard {
         squares = new ChessPiece[8][8];
     }
 
+    public ChessBoard(ChessBoard original) {
+        squares = new ChessPiece[8][8];
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                squares[r][c] = new ChessPiece(original.squares[r][c]);
+            }
+        }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
@@ -58,6 +67,14 @@ public class ChessBoard {
         squares[row][5] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
         squares[row][6] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
         squares[row][7] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
+    }
+
+    public void movePiece(ChessMove move) {
+        ChessPosition startPosition = move.getStartPosition();
+        ChessPosition endPosition = move.getEndPosition();
+        ChessPiece piece = squares[startPosition.getRow()-1][startPosition.getColumn()-1];
+        squares[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
+        squares[endPosition.getRow()-1][endPosition.getColumn()-1] = piece;
     }
 
     /**
