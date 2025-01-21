@@ -11,7 +11,7 @@ import java.util.Collection;
  */
 public class ChessGame {
 
-    private final ChessBoard board;
+    private ChessBoard board;
     private boolean teamTurn;
 
     public ChessGame() {
@@ -37,11 +37,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        if (team == TeamColor.WHITE) {
-            teamTurn = false;
-        } else {
-            teamTurn = true;
-        }
+        teamTurn = team != TeamColor.WHITE;
     }
 
     /**
@@ -60,12 +56,23 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        Collection<ChessMove> validMoves = null;
+        ArrayList<ChessMove> moves = null;
         ChessPiece piece = board.getPiece(startPosition);
         if (piece != null) {
-            validMoves = piece.pieceMoves(board, startPosition);
+            moves = (ArrayList<ChessMove>) piece.pieceMoves(board, startPosition);
+            for (int i = 0; i < moves.size(); i++) {
+                ChessBoard copyBoard = new ChessBoard(board);
+                copyBoard.movePiece(moves.get(i));
+                ChessBoard temp = board;
+                board = copyBoard;
+                if (isInCheck(getTeamTurn())) {
+                    moves.remove(i);
+                    i--;
+                }
+                board = temp;
+            }
         }
-        return validMoves;
+        return moves;
     }
 
     /**

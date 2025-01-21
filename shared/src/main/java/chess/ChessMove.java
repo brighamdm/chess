@@ -47,10 +47,7 @@ public class ChessMove {
     }
 
     public boolean isEndPosition(ChessPosition myPosition) {
-        boolean result = false;
-        if (myPosition == endPosition) {
-            result = true;
-        }
+        boolean result = myPosition == endPosition;
         return result;
     }
 
