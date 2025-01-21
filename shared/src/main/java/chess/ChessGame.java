@@ -104,9 +104,10 @@ public class ChessGame {
             for (int c = 0; c < 8; c++) {
                 currPosition = new ChessPosition(r, c);
                 currPiece = board.getPiece(currPosition);
-                if (currPiece != null && currPiece.getTeamColor() == teamColor) {
-                    validMoves.addAll(currPiece.pieceMoves(board, currPosition));
-                } else if (currPiece != null && currPiece.getTeamColor() != teamColor &&
+                if (currPiece != null && currPiece.getTeamColor() != teamColor) {
+                    validMoves.addAll(validMoves(currPosition));
+                }
+                if (currPiece != null && currPiece.getTeamColor() == teamColor &&
                         currPiece.getPieceType() == ChessPiece.PieceType.KING) {
                     kingPosition = currPosition;
                 }
@@ -127,7 +128,25 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        boolean result = false;
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        ChessPosition currPosition;
+        ChessPiece currPiece;
+        if (isInCheck(teamColor)) {
+            for (int r = 0; r < 8; r++) {
+                for (int c = 0; c < 8; c++) {
+                    currPosition = new ChessPosition(r, c);
+                    currPiece = board.getPiece(currPosition);
+                    if (currPiece != null && currPiece.getTeamColor() == teamColor) {
+                        validMoves.addAll(validMoves(currPosition));
+                    }
+                }
+            }
+        }
+        if (validMoves.size() == 0) {
+            result = true;
+        }
+        return result;
     }
 
     /**
