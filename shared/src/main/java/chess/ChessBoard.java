@@ -18,10 +18,15 @@ public class ChessBoard {
     }
 
     public ChessBoard(ChessBoard original) {
-        squares = new ChessPiece[8][8];
+        this.squares = new ChessPiece[8][8];
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
-                squares[r][c] = new ChessPiece(original.squares[r][c]);
+                ChessPiece toCopy = original.squares[r][c];
+                if (toCopy == null) {
+                    this.squares[r][c] = null;
+                } else {
+                    this.squares[r][c] = new ChessPiece(toCopy);
+                }
             }
         }
     }

@@ -22,8 +22,8 @@ public class ChessPiece {
     }
 
     public ChessPiece(ChessPiece original) {
-        pieceColor = original.pieceColor;
-        pieceType = original.pieceType;
+        this.pieceColor = original.pieceColor;
+        this.pieceType = original.pieceType;
     }
 
     @Override

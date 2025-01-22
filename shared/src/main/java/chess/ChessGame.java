@@ -65,7 +65,7 @@ public class ChessGame {
                 copyBoard.movePiece(moves.get(i));
                 ChessBoard temp = board;
                 board = copyBoard;
-                if (isInCheck(getTeamTurn())) {
+                if (isInCheck(piece.getTeamColor())) {
                     moves.remove(i);
                     i--;
                 }
@@ -92,12 +92,12 @@ public class ChessGame {
         Collection<ChessMove> validMoves = new ArrayList<>();
         ChessPosition currPosition;
         ChessPiece currPiece;
-        for (int r = 0; r < 8; r++) {
-            for (int c = 0; c < 8; c++) {
+        for (int r = 1; r < 9; r++) {
+            for (int c = 1; c < 9; c++) {
                 currPosition = new ChessPosition(r, c);
                 currPiece = board.getPiece(currPosition);
                 if (currPiece != null && currPiece.getTeamColor() == team) {
-                    validMoves.addAll(validMoves(currPosition));
+                    validMoves.addAll(currPiece.pieceMoves(board, currPosition));
                 }
             }
         }
@@ -116,8 +116,8 @@ public class ChessGame {
         ChessPosition currPosition;
         ChessPosition kingPosition = null;
         ChessPiece currPiece;
-        for (int r = 0; r < 8; r++) {
-            for (int c = 0; c < 8; c++) {
+        for (int r = 1; r < 9; r++) {
+            for (int c = 1; c < 9; c++) {
                 currPosition = new ChessPosition(r, c);
                 currPiece = board.getPiece(currPosition);
                 if (currPiece != null && currPiece.getTeamColor() == teamColor &&
@@ -183,7 +183,11 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        board = new ChessBoard(board);
+        if (board != null) {
+            this.board = new ChessBoard(board);
+        } else {
+            this.board = new ChessBoard();
+        }
     }
 
     /**

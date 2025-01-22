@@ -47,8 +47,7 @@ public class ChessMove {
     }
 
     public boolean isEndPosition(ChessPosition myPosition) {
-        boolean result = myPosition == endPosition;
-        return result;
+        return myPosition.equals(endPosition);
     }
 
     @Override
