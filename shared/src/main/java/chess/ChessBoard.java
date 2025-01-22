@@ -74,12 +74,21 @@ public class ChessBoard {
         squares[row][7] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
     }
 
-    public void movePiece(ChessMove move) {
+    public boolean movePiece(ChessMove move) {
+        boolean success = false;
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
-        ChessPiece piece = squares[startPosition.getRow()-1][startPosition.getColumn()-1];
-        squares[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
-        squares[endPosition.getRow()-1][endPosition.getColumn()-1] = piece;
+        ChessPiece movePiece = squares[startPosition.getRow()-1][startPosition.getColumn()-1];
+        ChessPiece capturePiece = squares[endPosition.getRow()-1][endPosition.getColumn()-1];
+        if (movePiece != null && (capturePiece == null || (movePiece.getTeamColor() != capturePiece.getTeamColor()))) {
+            if (move.getPromotionPiece() != null) {
+                movePiece.setPieceType(move.getPromotionPiece());
+            }
+            squares[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
+            squares[endPosition.getRow()-1][endPosition.getColumn()-1] = movePiece;
+            success = true;
+        }
+        return success;
     }
 
     /**

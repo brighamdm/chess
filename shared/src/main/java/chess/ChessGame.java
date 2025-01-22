@@ -82,10 +82,15 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        board.movePiece(move);
-        if (isInCheck(getTeamTurn())) {
+        boolean success = false;
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        if (validMoves != null && validMoves.contains(move) && board.getPiece(move.getStartPosition()).getTeamColor() == getTeamTurn()) {
+            success = board.movePiece(move);
+        }
+        if (!success || isInCheck(getTeamTurn())) {
             throw new InvalidMoveException();
         }
+        teamTurn = !teamTurn;
     }
 
     private Collection<ChessMove> teamAllMoves(ChessGame.TeamColor team) {
