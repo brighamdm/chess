@@ -93,6 +93,22 @@ public class ChessGame {
         teamTurn = !teamTurn;
     }
 
+    private Collection<ChessMove> teamAllMovesInCheck(ChessGame.TeamColor team) {
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        ChessPosition currPosition;
+        ChessPiece currPiece;
+        for (int r = 1; r < 9; r++) {
+            for (int c = 1; c < 9; c++) {
+                currPosition = new ChessPosition(r, c);
+                currPiece = board.getPiece(currPosition);
+                if (currPiece != null && currPiece.getTeamColor() == team) {
+                    validMoves.addAll(validMoves(currPosition));
+                }
+            }
+        }
+        return validMoves;
+    }
+
     private Collection<ChessMove> teamAllMoves(ChessGame.TeamColor team) {
         Collection<ChessMove> validMoves = new ArrayList<>();
         ChessPosition currPosition;
@@ -142,7 +158,7 @@ public class ChessGame {
         validMoves = teamAllMoves(otherTeamColor);
 
         for (ChessMove move : validMoves) {
-            if (move.isEndPosition(kingPosition)) {
+            if (kingPosition != null && move.isEndPosition(kingPosition)) {
                 result = true;
             }
         }
@@ -158,7 +174,7 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         boolean result = false;
         if (isInCheck(teamColor)) {
-            if (teamAllMoves(teamColor).size() == 0) {
+            if (teamAllMovesInCheck(teamColor).isEmpty()) {
                 result = true;
             }
         }
@@ -175,7 +191,7 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         boolean result = false;
         if (!isInCheck(teamColor)) {
-            if (teamAllMoves(teamColor).size() == 0) {
+            if (teamAllMovesInCheck(teamColor).isEmpty()) {
                 result = true;
             }
         }
