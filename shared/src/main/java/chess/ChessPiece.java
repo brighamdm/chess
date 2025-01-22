@@ -15,15 +15,18 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor pieceColor;
     private PieceType pieceType;
+    private boolean moved;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.pieceType = type;
+        this.moved = false;
     }
 
     public ChessPiece(ChessPiece original) {
         this.pieceColor = original.pieceColor;
         this.pieceType = original.pieceType;
+        this.moved = original.moved;
     }
 
     @Override
@@ -68,6 +71,10 @@ public class ChessPiece {
 
     public void setPieceType(ChessPiece.PieceType type) {
         pieceType = type;
+    }
+
+    public void setMoved() {
+        moved = true;
     }
 
     /**

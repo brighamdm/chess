@@ -9,6 +9,11 @@ import static chess.ChessGame.TeamColor.WHITE;
 
 public class PawnCalculator implements PieceMovesCalculator {
 
+    private void checkEnPassant(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition,
+                                int rowChange, int colChange, boolean recursive, Collection<ChessMove> validMoves) {
+
+    }
+
     private void addMoves(ChessGame.TeamColor team, ChessPosition startPosition, ChessPosition endPosition, Collection<ChessMove> validMoves) {
         if ((team == WHITE && endPosition.getRow() == 8) || (team == ChessGame.TeamColor.BLACK && endPosition.getRow() == 1)) {
             ChessMove move = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN);

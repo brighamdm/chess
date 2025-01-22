@@ -84,6 +84,7 @@ public class ChessBoard {
             if (move.getPromotionPiece() != null) {
                 movePiece.setPieceType(move.getPromotionPiece());
             }
+            movePiece.setMoved();
             squares[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
             squares[endPosition.getRow()-1][endPosition.getColumn()-1] = movePiece;
             success = true;
