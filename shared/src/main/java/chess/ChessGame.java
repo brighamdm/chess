@@ -75,6 +75,18 @@ public class ChessGame {
         return moves;
     }
 
+    private void clearEnPassant() {
+        for (int r = 1; r < 9; r++) {
+            for (int c = 1; c < 9; c++) {
+                ChessPosition position = new ChessPosition(r, c);
+                ChessPiece piece = board.getPiece(position);
+                if (piece != null && piece.getTeamColor() == getTeamTurn()) {
+                    piece.setSubjectToEnPassant(false);
+                }
+            }
+        }
+    }
+
     /**
      * Makes a move in a chess game
      *
@@ -82,6 +94,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        clearEnPassant();
         boolean success = false;
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if (validMoves != null && validMoves.contains(move) && board.getPiece(move.getStartPosition()).getTeamColor() == getTeamTurn()) {

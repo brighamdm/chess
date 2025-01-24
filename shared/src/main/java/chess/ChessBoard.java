@@ -84,9 +84,18 @@ public class ChessBoard {
             if (move.getPromotionPiece() != null) {
                 movePiece.setPieceType(move.getPromotionPiece());
             }
+            if (movePiece.getPieceType() == ChessPiece.PieceType.PAWN &&
+                    Math.abs(move.getStartPosition().getRow() - move.getEndPosition().getRow()) > 1) {
+                movePiece.setSubjectToEnPassant(true);
+            }
+            if (move.getEnPassant() ||
+                    (movePiece.getPieceType() == ChessPiece.PieceType.PAWN && capturePiece == null &&
+                            move.getStartPosition().getColumn() != move.getEndPosition().getColumn())) {
+                squares[startPosition.getRow() - 1][endPosition.getColumn() - 1] = null;
+            }
+            squares[startPosition.getRow() - 1][startPosition.getColumn() - 1] = null;
+            squares[endPosition.getRow() - 1][endPosition.getColumn() - 1] = movePiece;
             movePiece.setMoved();
-            squares[startPosition.getRow()-1][startPosition.getColumn()-1] = null;
-            squares[endPosition.getRow()-1][endPosition.getColumn()-1] = movePiece;
             success = true;
         }
         return success;

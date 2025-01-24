@@ -13,12 +13,16 @@ public class ChessMove {
     private final ChessPosition startPosition;
     private final ChessPosition endPosition;
     private final ChessPiece.PieceType promotionPiece;
+    private boolean enPassant;
+    private boolean castle;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.promotionPiece = promotionPiece;
+        this.enPassant = false;
+        this.castle = false;
     }
 
     /**
@@ -33,6 +37,22 @@ public class ChessMove {
      */
     public ChessPosition getEndPosition() {
         return endPosition;
+    }
+
+    public void setEnPassant() {
+        enPassant = true;
+    }
+
+    public boolean getEnPassant() {
+        return enPassant;
+    }
+
+    public void setCastle() {
+        castle = true;
+    }
+
+    public boolean getCastle() {
+        return castle;
     }
 
     /**

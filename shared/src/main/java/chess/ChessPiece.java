@@ -15,17 +15,20 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor pieceColor;
     private PieceType pieceType;
+    private boolean subjectToEnPassant;
     private boolean moved;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.pieceType = type;
+        this.subjectToEnPassant = false;
         this.moved = false;
     }
 
     public ChessPiece(ChessPiece original) {
         this.pieceColor = original.pieceColor;
         this.pieceType = original.pieceType;
+        this.subjectToEnPassant = original.subjectToEnPassant;
         this.moved = original.moved;
     }
 
@@ -73,8 +76,20 @@ public class ChessPiece {
         pieceType = type;
     }
 
+    public void setSubjectToEnPassant(boolean set) {
+        subjectToEnPassant = set;
+    }
+
+    public boolean getSubjectToEnPassant() {
+        return subjectToEnPassant;
+    }
+
     public void setMoved() {
         moved = true;
+    }
+
+    public boolean getMoved() {
+        return moved;
     }
 
     /**
