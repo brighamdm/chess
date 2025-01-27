@@ -74,6 +74,16 @@ public class ChessBoard {
         squares[row][7] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
     }
 
+    private void moveCastle(ChessMove move) {
+        if (move.getEndPosition().getColumn() == 3) {
+            squares[move.getStartPosition().getRow()-1][3] = squares[move.getStartPosition().getRow()-1][0];
+            squares[move.getStartPosition().getRow()-1][0] = null;
+        } else {
+            squares[move.getStartPosition().getRow()-1][5] = squares[move.getStartPosition().getRow()-1][7];
+            squares[move.getStartPosition().getRow()-1][7] = null;
+        }
+    }
+
     public boolean movePiece(ChessMove move) {
         boolean success = false;
         ChessPosition startPosition = move.getStartPosition();
@@ -92,6 +102,10 @@ public class ChessBoard {
                     (movePiece.getPieceType() == ChessPiece.PieceType.PAWN && capturePiece == null &&
                             move.getStartPosition().getColumn() != move.getEndPosition().getColumn())) {
                 squares[startPosition.getRow() - 1][endPosition.getColumn() - 1] = null;
+            }
+            if (move.getCastle() || movePiece.getPieceType() == ChessPiece.PieceType.KING &&
+                    Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 2) {
+                moveCastle(move);
             }
             squares[startPosition.getRow() - 1][startPosition.getColumn() - 1] = null;
             squares[endPosition.getRow() - 1][endPosition.getColumn() - 1] = movePiece;

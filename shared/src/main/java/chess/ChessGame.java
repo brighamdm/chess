@@ -48,6 +48,24 @@ public class ChessGame {
         BLACK
     }
 
+    private boolean validCastle(ChessPosition myPosition, ChessMove move, ChessPiece piece) {
+        boolean result = false;
+        if (board.getPiece(myPosition).getPieceType() == ChessPiece.PieceType.KING &&
+                Math.abs(move.getStartPosition().getColumn() - move.getEndPosition().getColumn()) == 2) {
+            int shift = (move.getEndPosition().getColumn() - move.getStartPosition().getColumn()) / 2;
+            ChessBoard copyBoard = new ChessBoard(board);
+            copyBoard.movePiece(new ChessMove(myPosition,
+                    new ChessPosition(myPosition.getRow(), myPosition.getColumn() + shift), null));
+            ChessBoard temp = board;
+            board = copyBoard;
+            if (isInCheck(piece.getTeamColor())) {
+                result = true;
+            }
+            board = temp;
+        }
+        return result;
+    }
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -56,16 +74,18 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        boolean castleCheck;
         ArrayList<ChessMove> moves = null;
         ChessPiece piece = board.getPiece(startPosition);
         if (piece != null) {
             moves = (ArrayList<ChessMove>) piece.pieceMoves(board, startPosition);
             for (int i = 0; i < moves.size(); i++) {
+                castleCheck = validCastle(startPosition, moves.get(i), piece);
                 ChessBoard copyBoard = new ChessBoard(board);
                 copyBoard.movePiece(moves.get(i));
                 ChessBoard temp = board;
                 board = copyBoard;
-                if (isInCheck(piece.getTeamColor())) {
+                if (isInCheck(piece.getTeamColor()) || castleCheck) {
                     moves.remove(i);
                     i--;
                 }
