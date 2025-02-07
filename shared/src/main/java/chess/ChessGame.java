@@ -48,6 +48,15 @@ public class ChessGame {
         BLACK
     }
 
+    /**
+     * Verifies that suggested castle move is valid
+     *
+     * @param myPosition Position of piece being moved
+     * @param move       Move that needs checking for validity
+     * @param piece      Piece being moved
+     * @return True or False whether suggested castle move
+     * is valid
+     */
     private boolean validCastle(ChessPosition myPosition, ChessMove move, ChessPiece piece) {
         boolean result = false;
         if (board.getPiece(myPosition).getPieceType() == ChessPiece.PieceType.KING &&
@@ -95,6 +104,9 @@ public class ChessGame {
         return moves;
     }
 
+    /**
+     * Resets vulnerability to En Passant move
+     */
     private void clearEnPassant() {
         for (int r = 1; r < 9; r++) {
             for (int c = 1; c < 9; c++) {
@@ -126,6 +138,13 @@ public class ChessGame {
         teamTurn = !teamTurn;
     }
 
+    /**
+     * Finds all moves the team can make when in
+     * check
+     *
+     * @param team Which team to collect moves for
+     * @return Collection of moves the team can make
+     */
     private Collection<ChessMove> teamAllMovesInCheck(ChessGame.TeamColor team) {
         Collection<ChessMove> validMoves = new ArrayList<>();
         ChessPosition currPosition;
@@ -142,6 +161,13 @@ public class ChessGame {
         return validMoves;
     }
 
+    /**
+     * Finds all moves the opposing team can make
+     *
+     * @param team Which team to collect moves for
+     * @return Collection of moves the opposing
+     * team can make
+     */
     private Collection<ChessMove> teamAllMoves(ChessGame.TeamColor team) {
         Collection<ChessMove> validMoves = new ArrayList<>();
         ChessPosition currPosition;

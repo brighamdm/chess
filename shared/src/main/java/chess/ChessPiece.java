@@ -25,6 +25,11 @@ public class ChessPiece {
         this.moved = false;
     }
 
+    /**
+     * Constructs new ChessPiece as copy of original
+     *
+     * @param original Piece to copy
+     */
     public ChessPiece(ChessPiece original) {
         this.pieceColor = original.pieceColor;
         this.pieceType = original.pieceType;
@@ -72,24 +77,43 @@ public class ChessPiece {
         return pieceType;
     }
 
+    /**
+     * Sets pieceType
+     *
+     * @param type Type to set to
+     */
     public void setPieceType(ChessPiece.PieceType type) {
         pieceType = type;
     }
 
+    /**
+     * Sets subjectToEnPassant to given value
+     *
+     * @param set Value to set subjectToEnPassant to
+     */
     public void setSubjectToEnPassant(boolean set) {
         subjectToEnPassant = set;
     }
 
+    /**
+     * @return True if subjectToEnPassant is set
+     */
     public boolean getSubjectToEnPassant() {
         return subjectToEnPassant;
     }
 
+    /**
+     * Sets moved to true
+     */
     public void setMoved() {
         moved = true;
     }
 
-    public boolean getMoved() {
-        return moved;
+    /**
+     * @return True if moved is not set
+     */
+    public boolean getNotMoved() {
+        return !moved;
     }
 
     /**
@@ -101,7 +125,7 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves;
-        switch(pieceType) {
+        switch (pieceType) {
             case KING -> {
                 PieceMovesCalculator calculator = new KingCalculator();
                 validMoves = calculator.pieceMoves(board, myPosition);

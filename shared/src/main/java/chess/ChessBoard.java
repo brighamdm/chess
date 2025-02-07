@@ -17,6 +17,11 @@ public class ChessBoard {
         squares = new ChessPiece[8][8];
     }
 
+    /**
+     * Constructs new ChessBoard as copy of original
+     *
+     * @param original Board to copy
+     */
     public ChessBoard(ChessBoard original) {
         this.squares = new ChessPiece[8][8];
         for (int r = 0; r < 8; r++) {
@@ -38,7 +43,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        squares[position.getRow()-1][position.getColumn()-1] = piece;
+        squares[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -49,9 +54,16 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return squares[position.getRow()-1][position.getColumn()-1];
+        return squares[position.getRow() - 1][position.getColumn() - 1];
     }
 
+    /**
+     * Sets up pieces on board for one team
+     *
+     * @param team   Which team to place pieces for
+     * @param row    Which row to place pieces on
+     * @param offset Which direction to offset row
+     */
     private void setSideOfBoard(ChessGame.TeamColor team, int row, int offset) {
         squares[row][0] = new ChessPiece(team, ChessPiece.PieceType.ROOK);
         squares[row][1] = new ChessPiece(team, ChessPiece.PieceType.KNIGHT);
@@ -74,22 +86,34 @@ public class ChessBoard {
         squares[row][7] = new ChessPiece(team, ChessPiece.PieceType.PAWN);
     }
 
+    /**
+     * Moves rook if move is a castle
+     *
+     * @param move Move that is being performed
+     */
     private void moveCastle(ChessMove move) {
         if (move.getEndPosition().getColumn() == 3) {
-            squares[move.getStartPosition().getRow()-1][3] = squares[move.getStartPosition().getRow()-1][0];
-            squares[move.getStartPosition().getRow()-1][0] = null;
+            squares[move.getStartPosition().getRow() - 1][3] = squares[move.getStartPosition().getRow() - 1][0];
+            squares[move.getStartPosition().getRow() - 1][0] = null;
         } else {
-            squares[move.getStartPosition().getRow()-1][5] = squares[move.getStartPosition().getRow()-1][7];
-            squares[move.getStartPosition().getRow()-1][7] = null;
+            squares[move.getStartPosition().getRow() - 1][5] = squares[move.getStartPosition().getRow() - 1][7];
+            squares[move.getStartPosition().getRow() - 1][7] = null;
         }
     }
 
+    /**
+     * Performs all operations for moving piece on board
+     *
+     * @param move Move to be performed
+     * @return True of False whether move was
+     * successfully executed
+     */
     public boolean movePiece(ChessMove move) {
         boolean success = false;
         ChessPosition startPosition = move.getStartPosition();
         ChessPosition endPosition = move.getEndPosition();
-        ChessPiece movePiece = squares[startPosition.getRow()-1][startPosition.getColumn()-1];
-        ChessPiece capturePiece = squares[endPosition.getRow()-1][endPosition.getColumn()-1];
+        ChessPiece movePiece = squares[startPosition.getRow() - 1][startPosition.getColumn() - 1];
+        ChessPiece capturePiece = squares[endPosition.getRow() - 1][endPosition.getColumn() - 1];
         if (movePiece != null && (capturePiece == null || (movePiece.getTeamColor() != capturePiece.getTeamColor()))) {
             if (move.getPromotionPiece() != null) {
                 movePiece.setPieceType(move.getPromotionPiece());

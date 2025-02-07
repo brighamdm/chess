@@ -39,18 +39,30 @@ public class ChessMove {
         return endPosition;
     }
 
+    /**
+     * Sets enPassant to true
+     */
     public void setEnPassant() {
         enPassant = true;
     }
 
+    /**
+     * @return True if enPassant is set
+     */
     public boolean getEnPassant() {
         return enPassant;
     }
 
+    /**
+     * Sets castle to true
+     */
     public void setCastle() {
         castle = true;
     }
 
+    /**
+     * @return True if castle is set
+     */
     public boolean getCastle() {
         return castle;
     }
@@ -65,6 +77,12 @@ public class ChessMove {
         return promotionPiece;
     }
 
+    /**
+     * Checks if position is endPosition in move
+     *
+     * @param myPosition Position to check
+     * @return True if myPosition is endPosition
+     */
     public boolean isEndPosition(ChessPosition myPosition) {
         return myPosition.equals(endPosition);
     }

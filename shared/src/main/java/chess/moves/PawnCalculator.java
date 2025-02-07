@@ -7,8 +7,24 @@ import java.util.Collection;
 
 import static chess.ChessGame.TeamColor.WHITE;
 
+/**
+ * A class for calculating moves a
+ * Pawn can make
+ */
 public class PawnCalculator implements PieceMovesCalculator {
 
+    /**
+     * Collects valid moves for a pawn
+     * that involve En Passant move
+     *
+     * @param board         Board being played on
+     * @param startPosition Initial position of pawn
+     * @param myPosition    Position of piece
+     * @param rowChange     Amount to change row for move
+     * @param colChange     Amount to change column for move
+     * @param recursive     Whether to call recursively
+     * @param validMoves    Collection of moves to add to
+     */
     private void checkEnPassant(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition,
                                 int rowChange, int colChange, boolean recursive, Collection<ChessMove> validMoves) {
         int pawnRow = myPosition.getRow();
@@ -31,6 +47,15 @@ public class PawnCalculator implements PieceMovesCalculator {
         }
     }
 
+    /**
+     * Adds pawns moves to validMoves, checking
+     * for possibility if promotion
+     *
+     * @param team          Team pawn is on
+     * @param startPosition Initial position of pawn
+     * @param endPosition   End position of pawn
+     * @param validMoves    Collection of moves to add to
+     */
     private void addMoves(ChessGame.TeamColor team, ChessPosition startPosition, ChessPosition endPosition, Collection<ChessMove> validMoves) {
         if ((team == WHITE && endPosition.getRow() == 8) || (team == ChessGame.TeamColor.BLACK && endPosition.getRow() == 1)) {
             ChessMove move = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN);
@@ -47,6 +72,16 @@ public class PawnCalculator implements PieceMovesCalculator {
         }
     }
 
+    /**
+     * Collects valid moves for a pawn
+     * that involve just moving forward
+     *
+     * @param board         Board being played on
+     * @param startPosition Initial position of pawn
+     * @param myPosition    Position of piece
+     * @param rowChange     Amount to change row for move
+     * @param validMoves    Collection of moves to add to
+     */
     private void getValidPawnForward(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition,
                                      int rowChange, Collection<ChessMove> validMoves) {
 
@@ -61,6 +96,18 @@ public class PawnCalculator implements PieceMovesCalculator {
         }
     }
 
+    /**
+     * Collects valid moves for a pawn
+     * that involve capturing
+     *
+     * @param board         Board being played on
+     * @param startPosition Initial position of pawn
+     * @param myPosition    Position of piece
+     * @param rowChange     Amount to change row for move
+     * @param colChange     Amount to change column for move
+     * @param recursive     Whether to call recursively
+     * @param validMoves    Collection of moves to add to
+     */
     private void getValidPawnCaptures(ChessBoard board, ChessPosition startPosition, ChessPosition myPosition,
                                       int rowChange, int colChange, boolean recursive, Collection<ChessMove> validMoves) {
 
@@ -78,9 +125,17 @@ public class PawnCalculator implements PieceMovesCalculator {
         }
     }
 
+    /**
+     * Collects valid moves for a white pawn
+     * in given position
+     *
+     * @param board      Board being played on
+     * @param myPosition Position of piece
+     * @param validMoves Collection of moves to add to
+     */
     private void whitePawn(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves) {
         getValidPawnForward(board, myPosition, myPosition, 1, validMoves);
-        ChessPosition nextForward = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn());
+        ChessPosition nextForward = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
         if (myPosition.getRow() == 2 && inBoard(nextForward.getRow(), nextForward.getColumn()) && board.getPiece(nextForward) == null) {
             getValidPawnForward(board, myPosition, myPosition, 2, validMoves);
         }
@@ -90,9 +145,17 @@ public class PawnCalculator implements PieceMovesCalculator {
         getValidPawnCaptures(board, myPosition, myPosition, 1, 1, true, validMoves);
     }
 
+    /**
+     * Collects valid moves for a black pawn
+     * in given position
+     *
+     * @param board      Board being played on
+     * @param myPosition Position of piece
+     * @param validMoves Collection of moves to add to
+     */
     private void blackPawn(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> validMoves) {
         getValidPawnForward(board, myPosition, myPosition, -1, validMoves);
-        ChessPosition nextForward = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn());
+        ChessPosition nextForward = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
         if (myPosition.getRow() == 7 && inBoard(nextForward.getRow(), nextForward.getColumn()) && board.getPiece(nextForward) == null) {
             getValidPawnForward(board, myPosition, myPosition, -2, validMoves);
         }
@@ -102,6 +165,14 @@ public class PawnCalculator implements PieceMovesCalculator {
         getValidPawnCaptures(board, myPosition, myPosition, -1, 1, true, validMoves);
     }
 
+    /**
+     * Function for finding all moves a
+     * pawn can make
+     *
+     * @param board      Board being played on
+     * @param myPosition Position of piece
+     * @return Collection of moves piece can make
+     */
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
