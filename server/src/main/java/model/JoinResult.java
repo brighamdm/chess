@@ -1,4 +1,4 @@
 package model;
 
-public record JoinResult() {
+public record JoinResult(String message) {
 }
