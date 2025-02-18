@@ -13,7 +13,7 @@ public interface Service {
     }
 
     default boolean authExists(String authToken) {
-        AuthData auth = getAuth(createRequest.authToken());
+        AuthData auth = getAuth(authToken);
         return auth != null;
     }
 }
