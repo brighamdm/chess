@@ -26,4 +26,15 @@ public interface AuthDAO {
         }
         return found;
     }
+
+    static void deleteAuth(String authToken) {
+        AuthData found = null;
+        for (AuthData a : auths) {
+            if (a.authToken().equals(authToken)) {
+                found = a;
+                break;
+            }
+        }
+        auths.remove(found);
+    }
 }
