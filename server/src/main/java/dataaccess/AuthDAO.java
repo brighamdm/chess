@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface AuthDAO {
 
-    ArrayList<AuthData> auths = new ArrayList<AuthData>();
+    ArrayList<AuthData> auths = new ArrayList<>();
 
     static void clear() {
         auths.clear();
