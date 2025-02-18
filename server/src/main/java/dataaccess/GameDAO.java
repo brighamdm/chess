@@ -7,7 +7,7 @@ import java.util.Collection;
 
 public interface GameDAO {
 
-    ArrayList<GameData> games = new ArrayList<GameData>();
+    ArrayList<GameData> games = new ArrayList<>();
 
     static void clear() {
         games.clear();

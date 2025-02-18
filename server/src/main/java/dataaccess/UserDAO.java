@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface UserDAO {
 
-    ArrayList<UserData> users = new ArrayList<UserData>();
+    ArrayList<UserData> users = new ArrayList<>();
 
     static void clear() {
         users.clear();
