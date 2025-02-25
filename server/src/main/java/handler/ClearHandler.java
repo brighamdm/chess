@@ -8,6 +8,8 @@ public class ClearHandler implements Handler {
 
     public Object clearHandler(Request req, Response res) {
 
+        req = null;
+
         ClearService service = new ClearService();
         ClearResult result = service.clear();
 
