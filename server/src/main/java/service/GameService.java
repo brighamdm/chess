@@ -11,7 +11,13 @@ import static dataaccess.GameDAO.*;
 
 public class GameService implements Service {
 
-    public CreateResult create(CreateRequest createRequest) {
+    public CreateResult create(CreateRequest createRequest)
+            throws UnauthorizedException, BadRequestException {
+        if (createRequest.authToken() == null ||
+                createRequest.gameName() == null) {
+            throw new BadRequestException("Error: bad request");
+        }
+
         if (authExists(createRequest.authToken())) {
             int gameID;
             while (true) {
@@ -29,48 +35,62 @@ public class GameService implements Service {
             }
             return new CreateResult(gameID);
         } else {
-            return new CreateResult("Error: Invalid AuthToken", -1);
+            throw new UnauthorizedException("Error: unauthorized");
         }
     }
 
-    public JoinResult join(JoinRequest joinRequest) {
+    public JoinResult join(JoinRequest joinRequest)
+            throws UnauthorizedException, UnavailableException, BadRequestException {
+        if (joinRequest.authToken() == null ||
+                joinRequest.gameID() == 0 ||
+                joinRequest.playerColor() == null) {
+            throw new BadRequestException("Error: bad request");
+        }
+
         AuthData auth = getAuth(joinRequest.authToken());
         if (auth != null) {
             GameData game = getGame(joinRequest.gameID());
             if (game != null) {
                 if (joinRequest.playerColor().equals("WHITE")) {
-                    updateGame(new GameData(game.gameID(),
-                            auth.username(),
-                            game.blackUsername(),
-                            game.gameName(),
-                            game.game()));
+                    if (game.whiteUsername() == null) {
+                        updateGame(new GameData(game.gameID(),
+                                auth.username(),
+                                game.blackUsername(),
+                                game.gameName(),
+                                game.game()));
 
-                    return new JoinResult(null);
+                        return new JoinResult();
+                    } else {
+                        throw new UnavailableException("Error: already taken");
+                    }
                 } else if (joinRequest.playerColor().equals("BLACK")) {
-                    updateGame(new GameData(game.gameID(),
-                            game.whiteUsername(),
-                            auth.username(),
-                            game.gameName(),
-                            game.game()));
+                    if (game.blackUsername() == null) {
+                        updateGame(new GameData(game.gameID(),
+                                game.whiteUsername(),
+                                auth.username(),
+                                game.gameName(),
+                                game.game()));
 
-                    return new JoinResult(null);
+                        return new JoinResult();
+                    } else {
+                        throw new UnavailableException("Error: already taken");
+                    }
                 } else {
-                    return new JoinResult("Error: Invalid Player Color");
+                    throw new BadRequestException("Error: bad request");
                 }
             } else {
-                return new JoinResult("Error: Game does not exist");
+                throw new BadRequestException("Error: bad request");
             }
         } else {
-            return new JoinResult("Error: Invalid AuthToken");
+            throw new UnauthorizedException("Error: unauthorized");
         }
     }
 
-    public ListResult list(LogoutRequest listRequest) {
+    public ListResult list(LogoutRequest listRequest) throws UnauthorizedException {
         if (authExists(listRequest.authToken())) {
-            return new ListResult(null,
-                    (List<GameData>) listGames());
+            return new ListResult((List<GameData>) listGames());
         } else {
-            return new ListResult("Error: Invalid AuthToken", null);
+            throw new UnauthorizedException("Error: unauthorized");
         }
     }
 }
