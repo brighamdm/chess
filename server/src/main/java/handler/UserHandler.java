@@ -2,7 +2,6 @@ package handler;
 
 import spark.*;
 import model.*;
-import org.eclipse.jetty.http.MetaData;
 import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UnavailableException;
