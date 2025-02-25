@@ -12,6 +12,6 @@ public class ClearService implements Service {
         UserDAO.clear();
         AuthDAO.clear();
 
-        return new ClearResult(null);
+        return new ClearResult();
     }
 }

@@ -27,7 +27,7 @@ public class GameService implements Service {
                     break;
                 }
             }
-            return new CreateResult(null, gameID);
+            return new CreateResult(gameID);
         } else {
             return new CreateResult("Error: Invalid AuthToken", -1);
         }
