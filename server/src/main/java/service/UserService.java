@@ -37,7 +37,7 @@ public class UserService implements Service {
             throws UnauthorizedException, BadRequestException {
         if (loginRequest.username() == null ||
                 loginRequest.password() == null) {
-            throw new BadRequestException("Error: bad request");
+            throw new BadRequestException("Bad Request");
         }
 
         UserData user = getUser(loginRequest.username());
@@ -49,10 +49,10 @@ public class UserService implements Service {
 
                 return new LoginResult(loginRequest.username(), authToken);
             } else {
-                throw new UnauthorizedException("Error: unauthorized");
+                throw new UnauthorizedException("Unauthorized");
             }
         } else {
-            throw new BadRequestException("Error: bad request");
+            throw new UnauthorizedException("Unauthorized");
         }
     }
 

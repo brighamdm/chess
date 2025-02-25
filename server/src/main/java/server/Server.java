@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import handler.ClearHandler;
 import handler.GameHandler;
@@ -8,6 +9,8 @@ import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UnavailableException;
 import spark.*;
+
+import java.util.Map;
 
 public class Server {
 
@@ -56,18 +59,24 @@ public class Server {
     }
 
     @SuppressWarnings("IfCanBeSwitch")
-    public void errorHandler(Exception e, Request req, Response res) {
+    public Object errorHandler(Exception e, Request req, Response res) {
+        int status;
         if (e instanceof DataAccessException) {
-            res.status(500);
+            status = 500;
         } else if (e instanceof BadRequestException) {
-            res.status(400);
+            status = 400;
         } else if (e instanceof UnauthorizedException) {
-            res.status(401);
+            status = 401;
         } else if (e instanceof UnavailableException) {
-            res.status(403);
+            status = 403;
         } else {
-            res.status(666);
+            status = 666;
         }
-        res.body(e.getMessage());
+
+        var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
+        res.type("application/json");
+        res.status(status);
+        res.body(body);
+        return body;
     }
 }
