@@ -15,7 +15,7 @@ public class GameService implements Service {
             throws UnauthorizedException, BadRequestException {
         if (createRequest.authToken() == null ||
                 createRequest.gameName() == null) {
-            throw new BadRequestException("Error: bad request");
+            throw new BadRequestException("Bad Request");
         }
 
         if (authExists(createRequest.authToken())) {
@@ -35,7 +35,7 @@ public class GameService implements Service {
             }
             return new CreateResult(gameID);
         } else {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new UnauthorizedException("Unauthorized");
         }
     }
 
@@ -44,7 +44,7 @@ public class GameService implements Service {
         if (joinRequest.authToken() == null ||
                 joinRequest.gameID() == 0 ||
                 joinRequest.playerColor() == null) {
-            throw new BadRequestException("Error: bad request");
+            throw new BadRequestException("Bad Request");
         }
 
         AuthData auth = getAuth(joinRequest.authToken());
@@ -61,7 +61,7 @@ public class GameService implements Service {
 
                         return new JoinResult();
                     } else {
-                        throw new UnavailableException("Error: already taken");
+                        throw new UnavailableException("Already Taken");
                     }
                 } else if (joinRequest.playerColor().equals("BLACK")) {
                     if (game.blackUsername() == null) {
@@ -73,16 +73,16 @@ public class GameService implements Service {
 
                         return new JoinResult();
                     } else {
-                        throw new UnavailableException("Error: already taken");
+                        throw new UnavailableException("Already Taken");
                     }
                 } else {
-                    throw new BadRequestException("Error: bad request");
+                    throw new BadRequestException("Bad Request");
                 }
             } else {
-                throw new BadRequestException("Error: bad request");
+                throw new BadRequestException("Bad Request");
             }
         } else {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new UnauthorizedException("Unauthorized");
         }
     }
 
@@ -90,7 +90,7 @@ public class GameService implements Service {
         if (authExists(listRequest.authToken())) {
             return new ListResult((List<GameData>) listGames());
         } else {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new UnauthorizedException("Unauthorized");
         }
     }
 }

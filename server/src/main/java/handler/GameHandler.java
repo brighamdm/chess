@@ -19,7 +19,8 @@ public class GameHandler implements Handler {
     public Object createHandler(Request req, Response res)
             throws UnauthorizedException, BadRequestException {
 
-        CreateRequest request = gson.fromJson(req.body(), CreateRequest.class);
+        CreateRequest requestTemp = gson.fromJson(req.body(), CreateRequest.class);
+        CreateRequest request = new CreateRequest(requestTemp.gameName(), req.headers("Authorization"));
 
         CreateResult result = gameService.create(request);
 
@@ -30,7 +31,8 @@ public class GameHandler implements Handler {
     public Object joinHandler(Request req, Response res)
             throws UnauthorizedException, UnavailableException, BadRequestException {
 
-        JoinRequest request = gson.fromJson(req.body(), JoinRequest.class);
+        JoinRequest requestTemp = gson.fromJson(req.body(), JoinRequest.class);
+        JoinRequest request = new JoinRequest(requestTemp.playerColor(), requestTemp.gameID(), req.headers("Authorization"));
 
         JoinResult result = gameService.join(request);
 
@@ -41,7 +43,7 @@ public class GameHandler implements Handler {
     public Object listHandler(Request req, Response res)
             throws UnauthorizedException {
 
-        ListRequest request = gson.fromJson(req.body(), ListRequest.class);
+        ListRequest request = new ListRequest(req.headers("Authorization"));
 
         ListResult result = gameService.list(request);
 
