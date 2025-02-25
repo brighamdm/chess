@@ -56,12 +56,16 @@ public class Server {
     }
 
     public void errorHandler(Exception e, Request req, Response res) {
-        switch (e) {
-            case DataAccessException dataAccessException -> res.status(500);
-            case BadRequestException badRequestException -> res.status(400);
-            case UnauthorizedException unauthorizedException -> res.status(401);
-            case UnavailableException unavailableException -> res.status(403);
-            case null, default -> res.status(666);
+        if (e instanceof DataAccessException) {
+            res.status(500);
+        } else if (e instanceof BadRequestException) {
+            res.status(400);
+        } else if (e instanceof UnauthorizedException) {
+            res.status(401);
+        } else if (e instanceof UnavailableException) {
+            res.status(403);
+        } else {
+            res.status(666);
         }
         res.body(e.getMessage());
     }
