@@ -60,6 +60,9 @@ public class Server {
 
     @SuppressWarnings("IfCanBeSwitch")
     public void errorHandler(Exception e, Request req, Response res) {
+
+        var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
+
         int status;
         if (e instanceof DataAccessException) {
             status = 500;
@@ -71,9 +74,9 @@ public class Server {
             status = 403;
         } else {
             status = 666;
+            System.out.println(body);
         }
 
-        var body = new Gson().toJson(Map.of("message", String.format("Error: %s", e.getMessage()), "success", false));
         res.type("application/json");
         res.status(status);
         res.body(body);

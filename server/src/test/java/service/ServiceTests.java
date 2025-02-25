@@ -1,9 +1,6 @@
 package service;
 
-import model.CreateRequest;
-import model.CreateResult;
-import model.RegisterRequest;
-import model.RegisterResult;
+import model.*;
 import org.junit.jupiter.api.*;
 
 public class ServiceTests {
@@ -48,6 +45,36 @@ public class ServiceTests {
         Assertions.assertThrows(BadRequestException.class, () ->
                 userService.register(new RegisterRequest("loser",
                         "password", null)));
+    }
+
+    @Test
+    public void logoutSuccess() throws UnavailableException, BadRequestException, UnauthorizedException {
+        RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
+                "brickwall", "bm888@byu.edu"));
+
+        LogoutResult logoutResult = userService.logout(new LogoutRequest(registerResult.authToken()));
+        Assertions.assertNotNull(logoutResult);
+    }
+
+    @Test
+    public void logoutFail() throws UnavailableException, BadRequestException, UnauthorizedException {
+        RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
+                "brickwall", "bm888@byu.edu"));
+
+        Assertions.assertThrows(BadRequestException.class, () -> userService.logout(null));
+    }
+
+    @Test
+    public void loginSuccess() throws UnavailableException, BadRequestException, UnauthorizedException {
+        RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
+                "brickwall", "bm888@byu.edu"));
+
+        LogoutResult logoutResult = userService.logout(new LogoutRequest(registerResult.authToken()));
+
+        LoginResult result = userService.login(new LoginRequest("bm888", "brickwall"));
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.authToken());
+        Assertions.assertEquals("bm888", result.username());
     }
 
     @Test

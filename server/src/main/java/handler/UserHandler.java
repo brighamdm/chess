@@ -40,7 +40,9 @@ public class UserHandler implements Handler {
     public Object logoutHandler(Request req, Response res)
             throws UnauthorizedException, BadRequestException {
 
-        LogoutRequest request = gson.fromJson(req.body(), LogoutRequest.class);
+        String authToken = req.headers("Authorization");
+
+        LogoutRequest request = new LogoutRequest(authToken);
 
         LogoutResult result = userService.logout(request);
 

@@ -13,7 +13,7 @@ public class UserService implements Service {
         if (registerRequest.username() == null ||
                 registerRequest.email() == null ||
                 registerRequest.password() == null) {
-            throw new BadRequestException("Error: bad request");
+            throw new BadRequestException("Bad Request");
         }
 
         if (getUser(registerRequest.username()) == null) {
@@ -29,7 +29,7 @@ public class UserService implements Service {
             return new RegisterResult(registerRequest.username(),
                     authToken);
         } else {
-            throw new UnavailableException("Error: already taken");
+            throw new UnavailableException("Already Taken");
         }
     }
 
@@ -59,8 +59,8 @@ public class UserService implements Service {
     public LogoutResult logout(LogoutRequest logoutRequest)
             throws UnauthorizedException, BadRequestException {
 
-        if (logoutRequest.authToken() == null) {
-            throw new BadRequestException("Error: bad request");
+        if (logoutRequest == null || logoutRequest.authToken() == null) {
+            throw new BadRequestException("Bad Request");
         }
 
         AuthData auth = getAuth(logoutRequest.authToken());
@@ -68,7 +68,7 @@ public class UserService implements Service {
             deleteAuth(logoutRequest.authToken());
             return new LogoutResult();
         } else {
-            throw new UnauthorizedException("Error: unauthorized");
+            throw new UnauthorizedException("Unauthorized");
         }
     }
 }
