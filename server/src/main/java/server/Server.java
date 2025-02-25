@@ -59,7 +59,7 @@ public class Server {
     }
 
     @SuppressWarnings("IfCanBeSwitch")
-    public Object errorHandler(Exception e, Request req, Response res) {
+    public void errorHandler(Exception e, Request req, Response res) {
         int status;
         if (e instanceof DataAccessException) {
             status = 500;
@@ -77,6 +77,5 @@ public class Server {
         res.type("application/json");
         res.status(status);
         res.body(body);
-        return body;
     }
 }
