@@ -12,42 +12,36 @@ public class UserHandler implements Handler {
     public Object registerHandler(Request req, Response res)
             throws UnavailableException, BadRequestException {
 
-        RegisterRequest request = fromJson(req.toString(), RegisterRequest.class);
+        RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
 
         UserService service = new UserService();
         RegisterResult result = service.register(request);
 
         res.status(200);
-        res.body(toJson(result));
-
-        return toJson(result);
+        return gson.toJson(result);
     }
 
     public Object loginHandler(Request req, Response res)
             throws UnauthorizedException, BadRequestException {
 
-        LoginRequest request = fromJson(req.toString(), LoginRequest.class);
+        LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
 
         UserService service = new UserService();
         LoginResult result = service.login(request);
 
         res.status(200);
-        res.body(toJson(result));
-
-        return toJson(result);
+        return gson.toJson(result);
     }
 
     public Object logoutHandler(Request req, Response res)
             throws UnauthorizedException, BadRequestException {
 
-        LogoutRequest request = fromJson(req.toString(), LogoutRequest.class);
+        LogoutRequest request = gson.fromJson(req.body(), LogoutRequest.class);
 
         UserService service = new UserService();
         LogoutResult result = service.logout(request);
 
         res.status(200);
-        res.body(toJson(result));
-
-        return toJson(result);
+        return gson.toJson(result);
     }
 }
