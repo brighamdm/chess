@@ -1,17 +1,25 @@
 package service;
 
+import model.GameData;
 import model.RegisterRequest;
 import model.RegisterResult;
 import org.junit.jupiter.api.*;
 
 public class ServiceTests {
 
+    private static ClearService clearService;
+    private static GameService gameService;
+    private static UserService userService;
+
+    @BeforeAll
+    static void init() {
+        clearService = new ClearService();
+        gameService = new GameService();
+        userService = new UserService();
+    }
+
     @BeforeEach
     void setUp() {
-        ClearService clearService = new ClearService();
-        GameService gameService = new GameService();
-        UserService userService = new UserService();
-
         clearService.clear();
     }
 
