@@ -6,15 +6,11 @@ import org.junit.jupiter.api.*;
 
 public class ServiceTests {
 
-    private ClearService clearService;
-    private GameService gameService;
-    private UserService userService;
-
     @BeforeEach
     void setUp() {
-        clearService = new ClearService();
-        gameService = new GameService();
-        userService = new UserService();
+        ClearService clearService = new ClearService();
+        GameService gameService = new GameService();
+        UserService userService = new UserService();
 
         clearService.clear();
     }
