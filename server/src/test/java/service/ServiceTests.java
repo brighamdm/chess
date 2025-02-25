@@ -57,8 +57,8 @@ public class ServiceTests {
     }
 
     @Test
-    public void logoutFail() throws UnavailableException, BadRequestException, UnauthorizedException {
-        RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
+    public void logoutFail() throws UnavailableException, BadRequestException {
+        userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
 
         Assertions.assertThrows(BadRequestException.class, () -> userService.logout(null));
@@ -69,7 +69,7 @@ public class ServiceTests {
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
 
-        LogoutResult logoutResult = userService.logout(new LogoutRequest(registerResult.authToken()));
+        userService.logout(new LogoutRequest(registerResult.authToken()));
 
         LoginResult result = userService.login(new LoginRequest("bm888", "brickwall"));
         Assertions.assertNotNull(result);
