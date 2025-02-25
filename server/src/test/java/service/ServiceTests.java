@@ -1,6 +1,7 @@
 package service;
 
-import model.GameData;
+import model.CreateRequest;
+import model.CreateResult;
 import model.RegisterRequest;
 import model.RegisterResult;
 import org.junit.jupiter.api.*;
@@ -48,4 +49,15 @@ public class ServiceTests {
                 userService.register(new RegisterRequest("loser",
                         "password", null)));
     }
+
+    @Test
+    public void createSuccess() throws UnauthorizedException, BadRequestException, UnavailableException {
+        RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
+                "brickwall", "bm888@byu.edu"));
+
+        CreateResult result = gameService.create(new CreateRequest("newGame", registerResult.authToken()));
+        Assertions.assertNotNull(result);
+        Assertions.assertNotEquals(0, result.gameID());
+    }
+
 }
