@@ -6,7 +6,7 @@ import spark.*;
 
 public class ClearHandler implements Handler {
 
-    public Object clearHandler(Request _req, Response res) {
+    public Object clearHandler(Request req, Response res) { //noinspection UnusedParameter
 
         ClearService service = new ClearService();
         ClearResult result = service.clear();
