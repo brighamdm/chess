@@ -1,6 +1,5 @@
 package model;
 
-public record RegisterResult(String message,
-                             String username,
+public record RegisterResult(String username,
                              String authToken) {
 }
