@@ -86,7 +86,7 @@ public class GameService implements Service {
         }
     }
 
-    public ListResult list(LogoutRequest listRequest) throws UnauthorizedException {
+    public ListResult list(ListRequest listRequest) throws UnauthorizedException {
         if (authExists(listRequest.authToken())) {
             return new ListResult((List<GameData>) listGames());
         } else {

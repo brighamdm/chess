@@ -9,13 +9,18 @@ import service.UserService;
 
 public class UserHandler implements Handler {
 
+    private final UserService userService;
+
+    public UserHandler() {
+        userService = new UserService();
+    }
+
     public Object registerHandler(Request req, Response res)
             throws UnavailableException, BadRequestException {
 
         RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
 
-        UserService service = new UserService();
-        RegisterResult result = service.register(request);
+        RegisterResult result = userService.register(request);
 
         res.status(200);
         return gson.toJson(result);
@@ -26,8 +31,7 @@ public class UserHandler implements Handler {
 
         LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
 
-        UserService service = new UserService();
-        LoginResult result = service.login(request);
+        LoginResult result = userService.login(request);
 
         res.status(200);
         return gson.toJson(result);
@@ -38,8 +42,7 @@ public class UserHandler implements Handler {
 
         LogoutRequest request = gson.fromJson(req.body(), LogoutRequest.class);
 
-        UserService service = new UserService();
-        LogoutResult result = service.logout(request);
+        LogoutResult result = userService.logout(request);
 
         res.status(200);
         return gson.toJson(result);
