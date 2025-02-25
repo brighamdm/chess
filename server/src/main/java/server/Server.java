@@ -55,6 +55,7 @@ public class Server {
         Spark.awaitStop();
     }
 
+    @SuppressWarnings("IfCanBeSwitch")
     public void errorHandler(Exception e, Request req, Response res) {
         if (e instanceof DataAccessException) {
             res.status(500);
