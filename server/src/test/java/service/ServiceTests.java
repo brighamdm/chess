@@ -22,22 +22,25 @@ public class ServiceTests {
     }
 
     @Test
-    public void registerSuccess() throws UnavailableException, BadRequestException {
-        RegisterResult result = userService.register(new RegisterRequest("bm888",
+    public void clearTest() throws UnavailableException, BadRequestException {
+        // Positive
+        userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
+
+        ClearResult result = clearService.clear();
         Assertions.assertNotNull(result);
-        Assertions.assertNotNull(result.authToken());
-        Assertions.assertEquals("bm888", result.username());
     }
 
     @Test
-    public void registerFail() throws UnavailableException, BadRequestException {
+    public void register() throws UnavailableException, BadRequestException {
+        // Positive
         RegisterResult result = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
         Assertions.assertNotNull(result);
         Assertions.assertNotNull(result.authToken());
         Assertions.assertEquals("bm888", result.username());
 
+        // Negative
         Assertions.assertThrows(UnavailableException.class, () ->
                 userService.register(new RegisterRequest("bm888",
                         "newpassword", "bm888@byu.edu")));
@@ -48,24 +51,21 @@ public class ServiceTests {
     }
 
     @Test
-    public void logoutSuccess() throws UnavailableException, BadRequestException, UnauthorizedException {
+    public void logout() throws UnavailableException, BadRequestException, UnauthorizedException {
+        // Positive
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
 
         LogoutResult logoutResult = userService.logout(new LogoutRequest(registerResult.authToken()));
         Assertions.assertNotNull(logoutResult);
-    }
 
-    @Test
-    public void logoutFail() throws UnavailableException, BadRequestException {
-        userService.register(new RegisterRequest("bm888",
-                "brickwall", "bm888@byu.edu"));
-
+        // Negative
         Assertions.assertThrows(BadRequestException.class, () -> userService.logout(null));
     }
 
     @Test
-    public void loginSuccess() throws UnavailableException, BadRequestException, UnauthorizedException {
+    public void login() throws UnavailableException, BadRequestException, UnauthorizedException {
+        // Positive
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
 
@@ -75,16 +75,71 @@ public class ServiceTests {
         Assertions.assertNotNull(result);
         Assertions.assertNotNull(result.authToken());
         Assertions.assertEquals("bm888", result.username());
+
+        // Negative
+        Assertions.assertThrows(UnauthorizedException.class,
+                () -> userService.login(new LoginRequest("loser", "brickwall")));
     }
 
     @Test
-    public void createSuccess() throws UnauthorizedException, BadRequestException, UnavailableException {
+    public void create() throws UnauthorizedException, BadRequestException, UnavailableException {
+        // Positive
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
 
-        CreateResult result = gameService.create(new CreateRequest("newGame", registerResult.authToken()));
+        CreateResult result = gameService.create(
+                new CreateRequest("newGame", registerResult.authToken()));
         Assertions.assertNotNull(result);
         Assertions.assertNotEquals(0, result.gameID());
+
+        // Negative
+        Assertions.assertThrows(UnauthorizedException.class,
+                () -> gameService.create(new CreateRequest("newGame", "1234")));
     }
 
+    @Test
+    public void list() throws UnavailableException, BadRequestException, UnauthorizedException {
+        // Positive
+        RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
+                "brickwall", "bm888@byu.edu"));
+
+        gameService.create(new CreateRequest("newGame1", registerResult.authToken()));
+        gameService.create(new CreateRequest("newGame2", registerResult.authToken()));
+        gameService.create(new CreateRequest("newGame3", registerResult.authToken()));
+
+        ListResult listResult = gameService.list(new ListRequest(registerResult.authToken()));
+        Assertions.assertNotNull(listResult);
+        Assertions.assertNotNull(listResult.games());
+        Assertions.assertEquals(3, listResult.games().size());
+
+        // Negative
+        Assertions.assertThrows(UnauthorizedException.class,
+                () -> gameService.list(new ListRequest("1234")));
+    }
+
+    @Test
+    public void join() throws UnavailableException, BadRequestException, UnauthorizedException {
+        // Positive
+        RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
+                "brickwall", "bm888@byu.edu"));
+
+        CreateResult createResult = gameService.create(
+                new CreateRequest("newGame", registerResult.authToken()));
+        JoinResult result = gameService.join(
+                new JoinRequest("WHITE",
+                        createResult.gameID(), registerResult.authToken()));
+        Assertions.assertNotNull(result);
+
+        ListResult listResult = gameService.list(new ListRequest(registerResult.authToken()));
+        Assertions.assertNotNull(listResult);
+        Assertions.assertNotNull(listResult.games());
+        Assertions.assertEquals(1, listResult.games().size());
+        Assertions.assertEquals("bm888", listResult.games().getFirst().whiteUsername());
+
+        // Negative
+        Assertions.assertThrows(UnavailableException.class,
+                () -> gameService.join(
+                        new JoinRequest("WHITE",
+                                createResult.gameID(), registerResult.authToken())));
+    }
 }
