@@ -18,23 +18,23 @@ public class UserHandler implements Handler {
     public Object registerHandler(Request req, Response res)
             throws UnavailableException, BadRequestException {
 
-        RegisterRequest request = gson.fromJson(req.body(), RegisterRequest.class);
+        RegisterRequest request = GSON.fromJson(req.body(), RegisterRequest.class);
 
         RegisterResult result = userService.register(request);
 
         res.status(200);
-        return gson.toJson(result);
+        return GSON.toJson(result);
     }
 
     public Object loginHandler(Request req, Response res)
             throws UnauthorizedException, BadRequestException {
 
-        LoginRequest request = gson.fromJson(req.body(), LoginRequest.class);
+        LoginRequest request = GSON.fromJson(req.body(), LoginRequest.class);
 
         LoginResult result = userService.login(request);
 
         res.status(200);
-        return gson.toJson(result);
+        return GSON.toJson(result);
     }
 
     public Object logoutHandler(Request req, Response res)
@@ -47,6 +47,6 @@ public class UserHandler implements Handler {
         LogoutResult result = userService.logout(request);
 
         res.status(200);
-        return gson.toJson(result);
+        return GSON.toJson(result);
     }
 }

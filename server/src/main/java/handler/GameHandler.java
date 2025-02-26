@@ -19,25 +19,25 @@ public class GameHandler implements Handler {
     public Object createHandler(Request req, Response res)
             throws UnauthorizedException, BadRequestException {
 
-        CreateRequest requestTemp = gson.fromJson(req.body(), CreateRequest.class);
+        CreateRequest requestTemp = GSON.fromJson(req.body(), CreateRequest.class);
         CreateRequest request = new CreateRequest(requestTemp.gameName(), req.headers("Authorization"));
 
         CreateResult result = gameService.create(request);
 
         res.status(200);
-        return gson.toJson(result);
+        return GSON.toJson(result);
     }
 
     public Object joinHandler(Request req, Response res)
             throws UnauthorizedException, UnavailableException, BadRequestException {
 
-        JoinRequest requestTemp = gson.fromJson(req.body(), JoinRequest.class);
+        JoinRequest requestTemp = GSON.fromJson(req.body(), JoinRequest.class);
         JoinRequest request = new JoinRequest(requestTemp.playerColor(), requestTemp.gameID(), req.headers("Authorization"));
 
         JoinResult result = gameService.join(request);
 
         res.status(200);
-        return gson.toJson(result);
+        return GSON.toJson(result);
     }
 
     public Object listHandler(Request req, Response res)
@@ -48,6 +48,6 @@ public class GameHandler implements Handler {
         ListResult result = gameService.list(request);
 
         res.status(200);
-        return gson.toJson(result);
+        return GSON.toJson(result);
     }
 }

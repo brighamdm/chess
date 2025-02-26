@@ -18,6 +18,6 @@ public class ClearHandler implements Handler {
         ClearResult result = clearService.clear();
 
         res.status(200);
-        return gson.toJson(result);
+        return GSON.toJson(result);
     }
 }

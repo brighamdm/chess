@@ -6,19 +6,19 @@ import java.util.ArrayList;
 
 public interface UserDAO {
 
-    ArrayList<UserData> users = new ArrayList<>();
+    ArrayList<UserData> USERS = new ArrayList<>();
 
     static void clear() {
-        users.clear();
+        USERS.clear();
     }
 
     static void createUser(UserData newUser) {
-        users.add(newUser);
+        USERS.add(newUser);
     }
 
     static UserData getUser(String username) {
         UserData found = null;
-        for (UserData u : users) {
+        for (UserData u : USERS) {
             if (u.username().equals(username)) {
                 found = u;
                 break;

@@ -6,19 +6,19 @@ import java.util.ArrayList;
 
 public interface AuthDAO {
 
-    ArrayList<AuthData> auths = new ArrayList<>();
+    ArrayList<AuthData> AUTHS = new ArrayList<>();
 
     static void clear() {
-        auths.clear();
+        AUTHS.clear();
     }
 
     static void createAuth(AuthData newAuth) {
-        auths.add(newAuth);
+        AUTHS.add(newAuth);
     }
 
     static AuthData getAuth(String authToken) {
         AuthData found = null;
-        for (AuthData a : auths) {
+        for (AuthData a : AUTHS) {
             if (a.authToken().equals(authToken)) {
                 found = a;
                 break;
@@ -29,12 +29,12 @@ public interface AuthDAO {
 
     static void deleteAuth(String authToken) {
         AuthData found = null;
-        for (AuthData a : auths) {
+        for (AuthData a : AUTHS) {
             if (a.authToken().equals(authToken)) {
                 found = a;
                 break;
             }
         }
-        auths.remove(found);
+        AUTHS.remove(found);
     }
 }
