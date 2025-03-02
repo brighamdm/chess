@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccessException;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 import static dataaccess.AuthDAO.*;
 import static dataaccess.UserDAO.createUser;
@@ -18,8 +19,10 @@ public class UserService implements Service {
         }
 
         if (getUser(registerRequest.username()) == null) {
+            String hashedPassword = BCrypt.hashpw(registerRequest.password(),
+                    BCrypt.gensalt());
             UserData user = new UserData(registerRequest.username(),
-                    registerRequest.password(),
+                    hashedPassword,
                     registerRequest.email());
             createUser(user);
 
@@ -43,7 +46,7 @@ public class UserService implements Service {
 
         UserData user = getUser(loginRequest.username());
         if (user != null) {
-            if (user.password().equals(loginRequest.password())) {
+            if (BCrypt.checkpw(loginRequest.password(), user.password())) {
                 String authToken = generateToken();
                 AuthData auth = new AuthData(authToken, loginRequest.username());
                 createAuth(auth);
