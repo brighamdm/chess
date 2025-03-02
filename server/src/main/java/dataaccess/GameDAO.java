@@ -2,15 +2,20 @@ package dataaccess;
 
 import model.GameData;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Collection;
 
 public interface GameDAO {
 
-    ArrayList<GameData> GAMES = new ArrayList<>();
-
-    static void clear() {
-        GAMES.clear();
+    static void clear() throws DataAccessException {
+        var statement = "TRUNCATE TABLE game";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     static void createGame(GameData newGame) {
