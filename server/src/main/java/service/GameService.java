@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.DataAccessException;
 import model.*;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import static dataaccess.GameDAO.*;
 public class GameService implements Service {
 
     public CreateResult create(CreateRequest createRequest)
-            throws UnauthorizedException, BadRequestException {
+            throws UnauthorizedException, BadRequestException, DataAccessException {
         if (createRequest.authToken() == null ||
                 createRequest.gameName() == null) {
             throw new BadRequestException("Bad Request");
@@ -40,7 +41,7 @@ public class GameService implements Service {
     }
 
     public JoinResult join(JoinRequest joinRequest)
-            throws UnauthorizedException, UnavailableException, BadRequestException {
+            throws UnauthorizedException, UnavailableException, BadRequestException, DataAccessException {
         if (joinRequest.authToken() == null ||
                 joinRequest.gameID() == 0 ||
                 joinRequest.playerColor() == null) {
