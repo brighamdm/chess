@@ -1,7 +1,8 @@
 package dataaccess;
 
-import model.AuthData;
 import model.UserData;
+
+import java.sql.SQLException;
 
 public interface UserDAO {
 
@@ -11,7 +12,7 @@ public interface UserDAO {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
@@ -25,7 +26,7 @@ public interface UserDAO {
                 preparedStatement.setString(3, newUser.email());
                 preparedStatement.executeUpdate();
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
@@ -43,7 +44,7 @@ public interface UserDAO {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException(String.format(e.getMessage()));
         }
         return null;

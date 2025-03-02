@@ -2,6 +2,8 @@ package dataaccess;
 
 import model.AuthData;
 
+import java.sql.SQLException;
+
 public interface AuthDAO {
 
     static void clear() throws DataAccessException {
@@ -10,7 +12,7 @@ public interface AuthDAO {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.executeUpdate();
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
@@ -23,7 +25,7 @@ public interface AuthDAO {
                 preparedStatement.setString(2, newAuth.username());
                 preparedStatement.executeUpdate();
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
@@ -40,7 +42,7 @@ public interface AuthDAO {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException(String.format(e.getMessage()));
         }
         return null;
@@ -53,7 +55,7 @@ public interface AuthDAO {
                 preparedStatement.setString(1, authToken);
                 preparedStatement.executeUpdate();
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
         }
     }
