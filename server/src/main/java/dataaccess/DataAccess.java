@@ -2,7 +2,7 @@ package dataaccess;
 
 public interface DataAccess {
 
-    String[] createStatements = {
+    String[] CREATE_STATEMENTS = {
             """
         CREATE TABLE IF NOT EXISTS auth (
           `id` INT NOT NULL AUTO_INCREMENT,
@@ -35,7 +35,7 @@ public interface DataAccess {
     static void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
+            for (var statement : CREATE_STATEMENTS) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
                 }
