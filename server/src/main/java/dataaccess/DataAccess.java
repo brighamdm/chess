@@ -2,7 +2,7 @@ package dataaccess;
 
 public interface DataAccess {
 
-    public final String[] createStatements = {
+    static String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS auth (
               `id` INT NOT NULL AUTO_INCREMENT,
