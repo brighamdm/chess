@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import model.*;
 import org.junit.jupiter.api.*;
@@ -15,6 +16,12 @@ public class ServiceTests {
         clearService = new ClearService();
         gameService = new GameService();
         userService = new UserService();
+
+        try {
+            DataAccess.configureDatabase();
+        } catch (DataAccessException e) {
+            System.err.println("Warning: Database initialization failed: " + e.getMessage());
+        }
     }
 
     @BeforeEach
