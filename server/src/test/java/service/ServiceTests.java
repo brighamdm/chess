@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import model.*;
 import org.junit.jupiter.api.*;
 
@@ -17,12 +18,12 @@ public class ServiceTests {
     }
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws DataAccessException {
         clearService.clear();
     }
 
     @Test
-    public void clearSuccess() throws UnavailableException, BadRequestException {
+    public void clearSuccess() throws UnavailableException, BadRequestException, DataAccessException {
         // Positive
         userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -32,7 +33,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void registerSuccess() throws UnavailableException, BadRequestException {
+    public void registerSuccess() throws UnavailableException, BadRequestException, DataAccessException {
         // Positive
         RegisterResult result = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -42,7 +43,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void registerFail() throws UnavailableException, BadRequestException {
+    public void registerFail() throws UnavailableException, BadRequestException, DataAccessException {
         // Negative
         userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -58,7 +59,7 @@ public class ServiceTests {
 
     @Test
     public void logoutSuccess()
-            throws UnavailableException, BadRequestException, UnauthorizedException {
+            throws UnavailableException, BadRequestException, UnauthorizedException, DataAccessException {
         // Positive
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -68,7 +69,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void logoutFail() throws UnavailableException, BadRequestException {
+    public void logoutFail() throws UnavailableException, BadRequestException, DataAccessException {
         // Negative
         userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -77,7 +78,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void loginSuccess() throws UnavailableException, BadRequestException, UnauthorizedException {
+    public void loginSuccess() throws UnavailableException, BadRequestException, UnauthorizedException, DataAccessException {
         // Positive
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -91,7 +92,7 @@ public class ServiceTests {
     }
 
     @Test
-    public void loginFail() throws UnavailableException, BadRequestException {
+    public void loginFail() throws UnavailableException, BadRequestException, DataAccessException {
         // Negative
         userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -101,7 +102,8 @@ public class ServiceTests {
     }
 
     @Test
-    public void createSuccess() throws UnauthorizedException, BadRequestException, UnavailableException {
+    public void createSuccess() throws UnauthorizedException,
+            BadRequestException, UnavailableException, DataAccessException {
         // Positive
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -120,7 +122,8 @@ public class ServiceTests {
     }
 
     @Test
-    public void listSuccess() throws UnavailableException, BadRequestException, UnauthorizedException {
+    public void listSuccess() throws UnavailableException,
+            BadRequestException, UnauthorizedException, DataAccessException {
         // Positive
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -136,7 +139,8 @@ public class ServiceTests {
     }
 
     @Test
-    public void listFail() throws UnavailableException, BadRequestException, UnauthorizedException {
+    public void listFail() throws UnavailableException,
+            BadRequestException, UnauthorizedException, DataAccessException {
         // Negative
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -150,7 +154,8 @@ public class ServiceTests {
     }
 
     @Test
-    public void joinSuccess() throws UnavailableException, BadRequestException, UnauthorizedException {
+    public void joinSuccess() throws UnavailableException,
+            BadRequestException, UnauthorizedException, DataAccessException {
         // Positive
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
@@ -170,7 +175,8 @@ public class ServiceTests {
     }
 
     @Test
-    public void joinFail() throws UnavailableException, BadRequestException, UnauthorizedException {
+    public void joinFail() throws UnavailableException,
+            BadRequestException, UnauthorizedException, DataAccessException {
         // Negative
         RegisterResult registerResult = userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));

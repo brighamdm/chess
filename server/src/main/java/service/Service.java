@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import model.AuthData;
 
 import java.util.UUID;
@@ -12,7 +13,7 @@ public interface Service {
         return UUID.randomUUID().toString();
     }
 
-    default boolean authExists(String authToken) {
+    default boolean authExists(String authToken) throws DataAccessException {
         AuthData auth = getAuth(authToken);
         return auth != null;
     }
