@@ -1,7 +1,6 @@
 package dataaccess;
 
 import model.AuthData;
-import com.google.gson.Gson;
 
 public interface AuthDAO {
 
