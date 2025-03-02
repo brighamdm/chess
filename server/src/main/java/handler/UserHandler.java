@@ -1,5 +1,6 @@
 package handler;
 
+import dataaccess.DataAccessException;
 import spark.*;
 import model.*;
 import service.BadRequestException;
@@ -16,7 +17,7 @@ public class UserHandler implements Handler {
     }
 
     public Object registerHandler(Request req, Response res)
-            throws UnavailableException, BadRequestException {
+            throws UnavailableException, BadRequestException, DataAccessException {
 
         RegisterRequest request = GSON.fromJson(req.body(), RegisterRequest.class);
 
@@ -27,7 +28,7 @@ public class UserHandler implements Handler {
     }
 
     public Object loginHandler(Request req, Response res)
-            throws UnauthorizedException, BadRequestException {
+            throws UnauthorizedException, BadRequestException, DataAccessException {
 
         LoginRequest request = GSON.fromJson(req.body(), LoginRequest.class);
 
@@ -38,7 +39,7 @@ public class UserHandler implements Handler {
     }
 
     public Object logoutHandler(Request req, Response res)
-            throws UnauthorizedException, BadRequestException {
+            throws UnauthorizedException, BadRequestException, DataAccessException {
 
         String authToken = req.headers("Authorization");
 

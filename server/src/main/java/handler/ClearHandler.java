@@ -1,5 +1,6 @@
 package handler;
 
+import dataaccess.DataAccessException;
 import model.ClearResult;
 import service.ClearService;
 import spark.*;
@@ -13,7 +14,7 @@ public class ClearHandler implements Handler {
     }
 
     @SuppressWarnings("unused")
-    public Object clearHandler(Request req, Response res) { //noinspection UnusedParameter
+    public Object clearHandler(Request req, Response res) throws DataAccessException { //noinspection UnusedParameter
 
         ClearResult result = clearService.clear();
 

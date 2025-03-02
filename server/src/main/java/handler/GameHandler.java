@@ -1,5 +1,6 @@
 package handler;
 
+import dataaccess.DataAccessException;
 import model.*;
 import service.BadRequestException;
 import service.GameService;
@@ -17,7 +18,7 @@ public class GameHandler implements Handler {
     }
 
     public Object createHandler(Request req, Response res)
-            throws UnauthorizedException, BadRequestException {
+            throws UnauthorizedException, BadRequestException, DataAccessException {
 
         CreateRequest requestTemp = GSON.fromJson(req.body(), CreateRequest.class);
         CreateRequest request = new CreateRequest(requestTemp.gameName(), req.headers("Authorization"));
@@ -29,7 +30,7 @@ public class GameHandler implements Handler {
     }
 
     public Object joinHandler(Request req, Response res)
-            throws UnauthorizedException, UnavailableException, BadRequestException {
+            throws UnauthorizedException, UnavailableException, BadRequestException, DataAccessException {
 
         JoinRequest requestTemp = GSON.fromJson(req.body(), JoinRequest.class);
         JoinRequest request = new JoinRequest(requestTemp.playerColor(), requestTemp.gameID(), req.headers("Authorization"));
@@ -41,7 +42,7 @@ public class GameHandler implements Handler {
     }
 
     public Object listHandler(Request req, Response res)
-            throws UnauthorizedException {
+            throws UnauthorizedException, DataAccessException {
 
         ListRequest request = new ListRequest(req.headers("Authorization"));
 

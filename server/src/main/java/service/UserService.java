@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import model.*;
 
 import static dataaccess.AuthDAO.*;
@@ -9,7 +10,7 @@ import static dataaccess.UserDAO.getUser;
 public class UserService implements Service {
 
     public RegisterResult register(RegisterRequest registerRequest)
-            throws UnavailableException, BadRequestException {
+            throws UnavailableException, BadRequestException, DataAccessException {
         if (registerRequest.username() == null ||
                 registerRequest.email() == null ||
                 registerRequest.password() == null) {
@@ -34,7 +35,7 @@ public class UserService implements Service {
     }
 
     public LoginResult login(LoginRequest loginRequest)
-            throws UnauthorizedException, BadRequestException {
+            throws UnauthorizedException, BadRequestException, DataAccessException {
         if (loginRequest.username() == null ||
                 loginRequest.password() == null) {
             throw new BadRequestException("Bad Request");
@@ -57,7 +58,7 @@ public class UserService implements Service {
     }
 
     public LogoutResult logout(LogoutRequest logoutRequest)
-            throws UnauthorizedException, BadRequestException {
+            throws UnauthorizedException, BadRequestException, DataAccessException {
 
         if (logoutRequest == null || logoutRequest.authToken() == null) {
             throw new BadRequestException("Bad Request");
