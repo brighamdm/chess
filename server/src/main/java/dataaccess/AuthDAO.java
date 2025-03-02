@@ -6,10 +6,17 @@ import java.util.ArrayList;
 
 public interface AuthDAO {
 
-    ArrayList<AuthData> AUTHS = new ArrayList<>();
-
-    static void clear() {
-        AUTHS.clear();
+    static void clear() throws DataAccessException {
+        var statement = "";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("SELECT 1+1")) {
+                var rs = preparedStatement.executeQuery();
+                rs.next();
+                System.out.println(rs.getInt(1));
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(e.getMessage());
+        }
     }
 
     static void createAuth(AuthData newAuth) {
