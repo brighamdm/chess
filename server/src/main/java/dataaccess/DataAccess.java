@@ -9,8 +9,7 @@ public interface DataAccess {
           `authToken` VARCHAR(256) NOT NULL,
           `username` VARCHAR(256) NOT NULL,
           PRIMARY KEY (`id`),
-          UNIQUE (`authToken`),
-          UNIQUE (`username`)
+          UNIQUE (`authToken`)
         );
         """,
             """
