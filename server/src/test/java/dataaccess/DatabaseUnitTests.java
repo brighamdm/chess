@@ -64,9 +64,10 @@ public class DatabaseUnitTests {
     public void getAuthSuccess() throws DataAccessException {
         // positive
         createAuth(new AuthData("token", "bm888"));
-        AuthData authData = getAuth("token");
+        createAuth(new AuthData("token2", "bm"));
+        AuthData authData = getAuth("token2");
         Assertions.assertNotNull(authData);
-        Assertions.assertEquals("bm888", authData.username());
+        Assertions.assertEquals("bm", authData.username());
     }
 
     @Test
@@ -124,7 +125,8 @@ public class DatabaseUnitTests {
     public void getUserSuccess() throws DataAccessException {
         // positive
         createUser(new UserData("bm888", "brickwall", "bm888@byu.edu"));
-        UserData userData = getUser("bm888");
+        createUser(new UserData("bm", "brickwall", "bm888@byu.edu"));
+        UserData userData = getUser("bm");
         Assertions.assertNotNull(userData);
         Assertions.assertEquals("brickwall", userData.password());
     }
@@ -173,7 +175,9 @@ public class DatabaseUnitTests {
         // positive
         createGame(new GameData(1234,
                 null, null, "game1", new ChessGame()));
-        GameData gameData = getGame(1234);
+        createGame(new GameData(123,
+                null, null, "game1", new ChessGame()));
+        GameData gameData = getGame(123);
         Assertions.assertNotNull(gameData);
         Assertions.assertEquals("game1", gameData.gameName());
     }
