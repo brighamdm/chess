@@ -9,7 +9,8 @@ public interface DataAccess {
           `authToken` VARCHAR(256) NOT NULL,
           `username` VARCHAR(256) NOT NULL,
           PRIMARY KEY (`id`),
-          UNIQUE (`authToken`)
+          UNIQUE (`authToken`),
+          UNIQUE (`username`)
         );
         """,
             """
@@ -27,7 +28,8 @@ public interface DataAccess {
           `id` INT NOT NULL AUTO_INCREMENT,
           `gameID` INT NOT NULL UNIQUE,
           `gameJSON` TEXT NOT NULL,
-          PRIMARY KEY (`id`)
+          PRIMARY KEY (`id`),
+          UNIQUE (`gameID`)
         );
         """
     };
