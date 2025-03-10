@@ -3,6 +3,7 @@ package serverfacade;
 import com.google.gson.Gson;
 import exception.ErrorResponse;
 import exception.ResponseException;
+import model.*;
 
 import java.io.*;
 import java.net.*;
@@ -14,6 +15,16 @@ public class ServerFacade {
 
     public ServerFacade(String url) {
         serverUrl = url;
+    }
+
+//    public Pet addPet(Pet pet) throws ResponseException {
+//        var path = "/pet";
+//        return this.makeRequest("POST", path, pet, Pet.class);
+//    }
+
+    public RegisterResult register(RegisterRequest registerRequest) {
+
+
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
