@@ -1,7 +1,6 @@
 package serverfacade;
 
 import com.google.gson.Gson;
-import exception.ErrorResponse;
 import exception.ResponseException;
 import model.*;
 
@@ -17,14 +16,39 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-//    public Pet addPet(Pet pet) throws ResponseException {
-//        var path = "/pet";
-//        return this.makeRequest("POST", path, pet, Pet.class);
-//    }
+    public ClearResult clear() throws ResponseException {
+        var path = "/db";
+        return this.makeRequest("DELETE", path, null, ClearResult.class);
+    }
 
-    public RegisterResult register(RegisterRequest registerRequest) {
+    public RegisterResult register(RegisterRequest registerRequest) throws ResponseException {
+        var path = "/user";
+        return this.makeRequest("POST", path, registerRequest, RegisterResult.class);
+    }
 
+    public LoginResult login(LoginRequest loginRequest) throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("POST", path, loginRequest, LoginResult.class);
+    }
 
+    public LogoutResult logout(LogoutRequest logoutRequest) throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("DELETE", path, logoutRequest, LogoutResult.class);
+    }
+
+    public ListResult list(ListRequest listRequest) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("GET", path, listRequest, ListResult.class);
+    }
+
+    public CreateResult create(CreateRequest createRequest) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("POST", path, createRequest, CreateResult.class);
+    }
+
+    public JoinResult join(JoinRequest joinRequest) throws ResponseException {
+        var path = "/game";
+        return this.makeRequest("PUT", path, joinRequest, JoinResult.class);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
