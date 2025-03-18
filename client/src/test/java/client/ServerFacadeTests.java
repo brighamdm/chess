@@ -86,7 +86,7 @@ public class ServerFacadeTests {
 
     @Test
     public void logoutFail() throws ResponseException {
-        RegisterResult registerResult = serverFacade.register(new RegisterRequest("bm888", "brickwall", "bm888@byu.edu"));
+        serverFacade.register(new RegisterRequest("bm888", "brickwall", "bm888@byu.edu"));
         Assertions.assertThrows(ResponseException.class, () -> serverFacade.logout(new LogoutRequest("fakeAuth")));
     }
 
@@ -99,7 +99,7 @@ public class ServerFacadeTests {
 
     @Test
     public void createFail() throws ResponseException {
-        RegisterResult registerResult = serverFacade.register(new RegisterRequest("bm888", "brickwall", "bm888@byu.edu"));
+        serverFacade.register(new RegisterRequest("bm888", "brickwall", "bm888@byu.edu"));
         Assertions.assertThrows(ResponseException.class, () -> serverFacade.create(new CreateRequest("newGame", "fakeAuth")));
     }
 
@@ -114,7 +114,7 @@ public class ServerFacadeTests {
     @Test
     public void joinFail() throws ResponseException {
         RegisterResult registerResult = serverFacade.register(new RegisterRequest("bm888", "brickwall", "bm888@byu.edu"));
-        CreateResult createResult = serverFacade.create(new CreateRequest("newGame", registerResult.authToken()));
+        serverFacade.create(new CreateRequest("newGame", registerResult.authToken()));
         Assertions.assertThrows(ResponseException.class, () -> serverFacade.join(new JoinRequest("WHITE", 0, registerResult.authToken())));
     }
 
