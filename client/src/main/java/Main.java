@@ -8,7 +8,7 @@ public class Main {
             serverUrl = args[0];
         }
 
-        //new Repl(serverUrl).run();
+        new Repl(serverUrl).run();
 
     }
 }
