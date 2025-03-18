@@ -20,8 +20,15 @@ public class GameHandler implements Handler {
     public Object createHandler(Request req, Response res)
             throws UnauthorizedException, BadRequestException, DataAccessException {
 
-        CreateRequest requestTemp = GSON.fromJson(req.body(), CreateRequest.class);
-        CreateRequest request = new CreateRequest(requestTemp.gameName(), req.headers("Authorization"));
+        String authToken = req.headers("Authorization");
+
+        CreateRequest request;
+        if (authToken == null) {
+            request = GSON.fromJson(req.body(), CreateRequest.class);
+        } else {
+            CreateRequest requestTemp = GSON.fromJson(req.body(), CreateRequest.class);
+            request = new CreateRequest(requestTemp.gameName(), authToken);
+        }
 
         CreateResult result = gameService.create(request);
 
@@ -32,8 +39,15 @@ public class GameHandler implements Handler {
     public Object joinHandler(Request req, Response res)
             throws UnauthorizedException, UnavailableException, BadRequestException, DataAccessException {
 
-        JoinRequest requestTemp = GSON.fromJson(req.body(), JoinRequest.class);
-        JoinRequest request = new JoinRequest(requestTemp.playerColor(), requestTemp.gameID(), req.headers("Authorization"));
+        String authToken = req.headers("Authorization");
+
+        JoinRequest request;
+        if (authToken == null) {
+            request = GSON.fromJson(req.body(), JoinRequest.class);
+        } else {
+            JoinRequest requestTemp = GSON.fromJson(req.body(), JoinRequest.class);
+            request = new JoinRequest(requestTemp.playerColor(), requestTemp.gameID(), authToken);
+        }
 
         JoinResult result = gameService.join(request);
 
@@ -43,11 +57,19 @@ public class GameHandler implements Handler {
 
     public Object listHandler(Request req, Response res)
             throws UnauthorizedException, DataAccessException {
-
-        ListRequest request = new ListRequest(req.headers("Authorization"));
+        System.out.println("in list handler");
+        System.out.flush();
+        String authToken = req.headers("Authorization");
+        System.out.println(req.body());
+        ListRequest request;
+        if (authToken == null) {
+            request = GSON.fromJson(req.body(), ListRequest.class);
+        } else {
+            request = new ListRequest(authToken);
+        }
 
         ListResult result = gameService.list(request);
-
+        System.out.println("size: " + result.games().size());
         res.status(200);
         return GSON.toJson(result);
     }

@@ -76,7 +76,6 @@ public class UserService implements Service {
             System.out.println("returning logout request");
             return new LogoutResult();
         } else {
-            System.out.println("unauthorized");
             throw new UnauthorizedException("Unauthorized");
         }
     }

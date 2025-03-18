@@ -81,7 +81,7 @@ public class ServiceTests {
         userService.register(new RegisterRequest("bm888",
                 "brickwall", "bm888@byu.edu"));
 
-        Assertions.assertThrows(BadRequestException.class, () -> userService.logout(null));
+        Assertions.assertThrows(UnauthorizedException.class, () -> userService.logout(new LogoutRequest("fakeAuth")));
     }
 
     @Test

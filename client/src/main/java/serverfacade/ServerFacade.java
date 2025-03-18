@@ -7,6 +7,8 @@ import model.*;
 import java.io.*;
 import java.net.*;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class ServerFacade {
@@ -39,6 +41,7 @@ public class ServerFacade {
 
     public ListResult list(ListRequest listRequest) throws ResponseException {
         var path = "/game";
+        System.out.println("listing");
         return this.makeRequest("GET", path, listRequest, ListResult.class);
     }
 
@@ -54,14 +57,22 @@ public class ServerFacade {
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
-            System.out.println("Started make request");
+            System.out.println("Started make request: " + method);
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
+            System.out.println("method: " + http.getRequestMethod());
             http.setDoOutput(true);
-            System.out.println("set thinhgs up");
-            writeBody(request, http);
-            System.out.println("wrote body");
+            System.out.println("set thinhgs up: " + http.getRequestMethod());
+
+            if (Objects.equals(method, "GET")) {
+                ListRequest listRequest = (ListRequest) request;
+                http.setRequestProperty("Authorization", listRequest.authToken());
+            } else {
+                writeBody(request, http);
+            }
+
+            System.out.println("wrote body:" + http.getRequestMethod());
             http.connect();
             System.out.println("connected");
             throwIfNotSuccessful(http);
