@@ -2,11 +2,11 @@ package ui;
 
 import serverfacade.ServerFacade;
 
-public class UserClient {
+public class LoggedInClient {
 
     private ServerFacade server;
 
-    public UserClient(String serverUrl) {
+    public LoggedInClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
     }
 }

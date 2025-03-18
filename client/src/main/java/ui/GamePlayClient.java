@@ -2,12 +2,11 @@ package ui;
 
 import serverfacade.ServerFacade;
 
-public class ClearClient {
+public class GamePlayClient {
 
     private ServerFacade server;
 
-    public ClearClient(String serverUrl) {
+    public GamePlayClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
     }
-
 }
