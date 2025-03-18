@@ -57,10 +57,7 @@ public class GameHandler implements Handler {
 
     public Object listHandler(Request req, Response res)
             throws UnauthorizedException, DataAccessException {
-        System.out.println("in list handler");
-        System.out.flush();
         String authToken = req.headers("Authorization");
-        System.out.println(req.body());
         ListRequest request;
         if (authToken == null) {
             request = GSON.fromJson(req.body(), ListRequest.class);
@@ -69,7 +66,6 @@ public class GameHandler implements Handler {
         }
 
         ListResult result = gameService.list(request);
-        System.out.println("size: " + result.games().size());
         res.status(200);
         return GSON.toJson(result);
     }

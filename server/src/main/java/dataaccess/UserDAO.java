@@ -35,12 +35,9 @@ public interface UserDAO {
         var statement = "SELECT username, password, email FROM user WHERE username=?";
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
-                System.out.println("past two tries");
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
-                    System.out.println("past query");
                     if (rs.next()) {
-                        System.out.println("returning");
                         return new UserData(rs.getString("username"),
                                 rs.getString("password"),
                                 rs.getString("email"));
@@ -50,7 +47,6 @@ public interface UserDAO {
         } catch (SQLException e) {
             throw new DataAccessException(String.format(e.getMessage()));
         }
-        System.out.println("returing null");
         return null;
     }
 }

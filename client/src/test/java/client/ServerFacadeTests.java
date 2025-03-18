@@ -80,7 +80,6 @@ public class ServerFacadeTests {
     @Test
     public void logoutSuccess() throws ResponseException {
         RegisterResult registerResult = serverFacade.register(new RegisterRequest("bm888", "brickwall", "bm888@byu.edu"));
-        System.out.println("auth: " + registerResult.authToken());
         LogoutResult logoutResult = serverFacade.logout(new LogoutRequest(registerResult.authToken()));
         Assertions.assertNotNull(logoutResult);
     }

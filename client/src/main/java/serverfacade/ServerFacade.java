@@ -41,7 +41,6 @@ public class ServerFacade {
 
     public ListResult list(ListRequest listRequest) throws ResponseException {
         var path = "/game";
-        System.out.println("listing");
         return this.makeRequest("GET", path, listRequest, ListResult.class);
     }
 
@@ -57,13 +56,10 @@ public class ServerFacade {
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
-            System.out.println("Started make request: " + method);
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
-            System.out.println("method: " + http.getRequestMethod());
             http.setDoOutput(true);
-            System.out.println("set thinhgs up: " + http.getRequestMethod());
 
             if (Objects.equals(method, "GET")) {
                 ListRequest listRequest = (ListRequest) request;
@@ -72,11 +68,8 @@ public class ServerFacade {
                 writeBody(request, http);
             }
 
-            System.out.println("wrote body:" + http.getRequestMethod());
             http.connect();
-            System.out.println("connected");
             throwIfNotSuccessful(http);
-            System.out.println("after throw");
             return readBody(http, responseClass);
         } catch (ResponseException ex) {
             throw ex;
@@ -90,7 +83,6 @@ public class ServerFacade {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
-            System.out.println("request auth: " + reqData);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
@@ -99,11 +91,9 @@ public class ServerFacade {
 
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
-        System.out.println(!isSuccessful(status));
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    System.out.println("Error not null");
                     throw ResponseException.fromJson(respErr);
                 }
             }
@@ -120,16 +110,11 @@ public class ServerFacade {
 
                 // DEBUG: Print the raw response
                 String rawJson = new BufferedReader(reader).lines().collect(Collectors.joining("\n"));
-                System.out.println("Raw JSON Response: " + rawJson);
 
                 if (responseClass != null) {
-                    System.out.println("not null");
                     response = new Gson().fromJson(rawJson, responseClass);
                 }
             }
-        }
-        if (response == null) {
-            System.out.println("its null");
         }
         return response;
     }
