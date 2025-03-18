@@ -14,7 +14,7 @@ public class Repl {
     public Repl(String serverUrl) {
         authToken = null;
         startClient = new StartClient(serverUrl);
-        LoggedInClient = new LoggedInClient(serverUrl);
+        loggedInClient = new LoggedInClient(serverUrl);
         gamePlayClient = new GamePlayClient(serverUrl);
     }
 
@@ -25,12 +25,10 @@ public class Repl {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals("quit")) {
+        while (!result.equals("Goodbye!")) {
             String line = scanner.nextLine();
-
-            try {
-                result = client.eval
-            }
+            result = startClient.eval(line);
+            System.out.println(result);
         }
     }
 

@@ -1,6 +1,9 @@
 package ui;
 
+import exception.ResponseException;
 import serverfacade.ServerFacade;
+
+import java.util.Arrays;
 
 public class StartClient {
 
@@ -8,6 +11,41 @@ public class StartClient {
 
     public StartClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
+    }
+
+    public String eval(String line) {
+        try {
+            var tokens = line.toLowerCase().split(" ");
+            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "l", "login" -> login(params);
+                case "r", "register" -> register(params);
+                case "q", "quit" -> quit();
+                case "h", "help" -> help();
+                default -> help();
+            };
+        } catch (ResponseException ex) {
+            return ex.getMessage();
+        }
+    }
+
+    public String login(String... params) throws ResponseException {
+        if (params.length >= 2) {
+            return "Valid login";
+        }
+        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+    }
+
+    public String register(String... params) throws ResponseException {
+        if (params.length >= 3) {
+            return "Valid register";
+        }
+        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
+    }
+
+    public String quit() {
+        return "Goodbye!";
     }
 
     public String help() {
