@@ -17,19 +17,22 @@ public class UserService implements Service {
                 registerRequest.password() == null) {
             throw new BadRequestException("Bad Request");
         }
-
+        System.out.println("hashing password:" + registerRequest.password());
         if (getUser(registerRequest.username()) == null) {
+            System.out.println("hashing password");
             String hashedPassword = BCrypt.hashpw(registerRequest.password(),
                     BCrypt.gensalt());
+            System.out.println("password hashed");
             UserData user = new UserData(registerRequest.username(),
                     hashedPassword,
                     registerRequest.email());
+            System.out.println("user created");
             createUser(user);
-
+            System.out.println("generating token");
             String authToken = generateToken();
             AuthData auth = new AuthData(authToken, registerRequest.username());
             createAuth(auth);
-
+            System.out.println("returning register result " + registerRequest.username() + " " + authToken);
             return new RegisterResult(registerRequest.username(),
                     authToken);
         } else {
@@ -62,7 +65,7 @@ public class UserService implements Service {
 
     public LogoutResult logout(LogoutRequest logoutRequest)
             throws UnauthorizedException, BadRequestException, DataAccessException {
-
+        System.out.println("logging out " + logoutRequest.authToken());
         if (logoutRequest == null || logoutRequest.authToken() == null) {
             throw new BadRequestException("Bad Request");
         }
@@ -70,8 +73,10 @@ public class UserService implements Service {
         AuthData auth = getAuth(logoutRequest.authToken());
         if (auth != null) {
             deleteAuth(logoutRequest.authToken());
+            System.out.println("returning logout request");
             return new LogoutResult();
         } else {
+            System.out.println("unauthorized");
             throw new UnauthorizedException("Unauthorized");
         }
     }

@@ -43,7 +43,12 @@ public class UserHandler implements Handler {
 
         String authToken = req.headers("Authorization");
 
-        LogoutRequest request = new LogoutRequest(authToken);
+        LogoutRequest request;
+        if (authToken == null) {
+            request = GSON.fromJson(req.body(), LogoutRequest.class);
+        } else {
+            request = new LogoutRequest(authToken);
+        }
 
         LogoutResult result = userService.logout(request);
 
