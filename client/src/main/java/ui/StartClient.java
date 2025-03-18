@@ -5,6 +5,8 @@ import serverfacade.ServerFacade;
 
 import java.util.Arrays;
 
+import static ui.EscapeSequences.SET_TEXT_COLOR_YELLOW;
+
 public class StartClient {
 
     private ServerFacade server;
@@ -34,18 +36,18 @@ public class StartClient {
         if (params.length >= 2) {
             return "Valid login";
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
+        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>\n");
     }
 
     public String register(String... params) throws ResponseException {
         if (params.length >= 3) {
             return "Valid register";
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
+        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>\n");
     }
 
     public String quit() {
-        return "Goodbye!";
+        return SET_TEXT_COLOR_YELLOW + "Goodbye!";
     }
 
     public String help() {
