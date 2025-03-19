@@ -112,7 +112,11 @@ public class GamePlayClient {
             for (int k = 0; k < 8; k++) {
                 int col = isWhitePerspective ? k + 1 : 8 - k;
 
-                if ((col - 1 + i) % 2 == 0) {
+                int colorCheck = isWhitePerspective ? 0 : 1;
+                String hiddenColor1 = isWhitePerspective ? fgColor1 : fgColor2;
+                String hiddenColor2 = isWhitePerspective ? fgColor2 : fgColor1;
+
+                if ((col - 1 + i) % 2 == colorCheck) {
                     System.out.print(bgColor1);
                 } else {
                     System.out.print(bgColor2);
@@ -121,9 +125,9 @@ public class GamePlayClient {
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
                 if (piece == null) {
                     if ((col - 1 + i) % 2 == 0) {
-                        System.out.print(fgColor1 + BLACK_KING);
+                        System.out.print(hiddenColor1 + BLACK_KING);
                     } else {
-                        System.out.print(fgColor2 + BLACK_KING);
+                        System.out.print(hiddenColor2 + BLACK_KING);
                     }
                 } else {
                     System.out.print(piece.getTeamColor() == ChessGame.TeamColor.WHITE ? whiteColor : blackColor);
