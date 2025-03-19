@@ -43,12 +43,12 @@ public class StartClient {
                 var password = params[1];
                 LoginResult loginResult = server.login(new LoginRequest(username, password));
                 authToken.append(loginResult.authToken());
-                return SET_TEXT_COLOR_BLUE + "Successfully logged in.\n";
+                return SET_TEXT_COLOR_BLUE + "Successfully logged in.";
             } catch (Exception ex) {
-                throw new ResponseException(400, ex.getMessage() + "\nExpected: <USERNAME> <PASSWORD>\n");
+                throw new ResponseException(400, ex.getMessage() + "\nExpected: <USERNAME> <PASSWORD>");
             }
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>\n");
+        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD>");
     }
 
     public String register(StringBuilder authToken, String... params) throws ResponseException {
@@ -59,12 +59,12 @@ public class StartClient {
                 var email = params[2];
                 RegisterResult registerResult = server.register(new RegisterRequest(username, password, email));
                 authToken.append(registerResult.authToken());
-                return SET_TEXT_COLOR_BLUE + "Successfully registered.\n";
+                return SET_TEXT_COLOR_BLUE + "Successfully registered.";
             } catch (Exception ex) {
-                throw new ResponseException(400, ex.getMessage() + "\nExpected: <USERNAME> <PASSWORD> <EMAIL>\n");
+                throw new ResponseException(400, ex.getMessage() + "\nExpected: <USERNAME> <PASSWORD> <EMAIL>");
             }
         }
-        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>\n");
+        throw new ResponseException(400, "Expected: <USERNAME> <PASSWORD> <EMAIL>");
     }
 
     public String quit() {
@@ -73,7 +73,7 @@ public class StartClient {
 
     public String help() {
         return """
-                Options:
+                \nOptions:
                 Login as an existing user: "l", "login" <USERNAME> <PASSWORD>
                 Register a new user: "r", "register" <USERNAME <PASSWORD> <EMAIL>
                 Exit the program: "q", "quit"

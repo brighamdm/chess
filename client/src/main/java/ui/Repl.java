@@ -24,11 +24,11 @@ public class Repl {
         gamePlayClient = new GamePlayClient(serverUrl);
 
         // Uncomment if wanting to clear database
-        try {
-            startClient.clear();
-        } catch (ResponseException ex) {
-            System.out.println("Failed to clear database");
-        }
+//        try {
+//            startClient.clear();
+//        } catch (ResponseException ex) {
+//            System.out.println("Failed to clear database");
+//        }
     }
 
     public void run() {
@@ -44,7 +44,6 @@ public class Repl {
             printPrompt();
             String line = scanner.nextLine();
             StringBuilder auth = new StringBuilder();
-            System.out.println();
             result = startClient.eval(line, auth);
             System.out.println(SET_TEXT_COLOR_RED + result);
 
@@ -65,11 +64,10 @@ public class Repl {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals(SET_TEXT_COLOR_YELLOW + "Logged out.\n")) {
+        while (!result.equals(SET_TEXT_COLOR_YELLOW + "Logged out.")) {
             printPrompt();
             String line = scanner.nextLine();
             StringBuilder id = new StringBuilder();
-            System.out.println();
             result = loggedInClient.eval(line, authToken, id);
 
             if (!id.isEmpty()) {
@@ -101,10 +99,9 @@ public class Repl {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals(SET_TEXT_COLOR_YELLOW + "Leaving gameplay.\n")) {
+        while (!result.equals(SET_TEXT_COLOR_YELLOW + "Leaving gameplay.")) {
             printPrompt();
             String line = scanner.nextLine();
-            System.out.println();
             result = gamePlayClient.eval(line, authToken);
             System.out.println(SET_TEXT_COLOR_RED + result);
         }

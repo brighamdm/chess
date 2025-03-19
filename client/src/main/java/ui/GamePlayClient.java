@@ -55,10 +55,10 @@ public class GamePlayClient {
                 ListResult listResult = server.list(new ListRequest(authToken));
                 game = listResult.games().get(id - 1).game();
             } catch (Exception ex) {
-                System.out.println(ex.getMessage() + "\nFailed to initialize game.\n");
+                System.out.println(ex.getMessage() + "\nFailed to initialize game.");
             }
         } else {
-            System.out.println("Failed to initialize game.\n");
+            System.out.println("Failed to initialize game.");
         }
     }
 
@@ -79,10 +79,10 @@ public class GamePlayClient {
 
     public String draw() throws ResponseException {
         if (team == -1) {
-            throw new ResponseException(400, "Team not set.\n");
+            throw new ResponseException(400, "Team not set.");
         }
         drawBoard(team == 1);
-        return null;
+        return "";
     }
 
     public void drawBoard(boolean isWhitePerspective) {
@@ -155,17 +155,17 @@ public class GamePlayClient {
             }
         }
 
-        System.out.println("    " + RESET_BG_COLOR + "\n");
+        System.out.println("    " + RESET_BG_COLOR);
     }
 
     public String leave() {
         team = -1;
-        return SET_TEXT_COLOR_YELLOW + "Leaving gameplay.\n";
+        return SET_TEXT_COLOR_YELLOW + "Leaving gameplay.";
     }
 
     public String help() {
         return """
-                Options:
+                \nOptions:
                 Redraw Chess Board: "r", "redraw"
                 Leave game: "leave"
                 """;
