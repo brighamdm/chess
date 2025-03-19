@@ -93,6 +93,11 @@ public class Repl {
         mode = "Chess Game";
 
         gamePlayClient.initializeGame(authToken, team, gameID);
+        try {
+            gamePlayClient.draw();
+        } catch (ResponseException e) {
+            System.out.println("Failed Initial Draw");
+        }
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
