@@ -51,8 +51,7 @@ public class Repl {
             if (!auth.isEmpty()) {
                 authToken = auth.toString();
                 loggedIn();
-                auth.setLength(0);
-                mode = "Chess";
+                mode = "Chess Login";
             }
         }
     }
@@ -66,7 +65,7 @@ public class Repl {
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (!result.equals(SET_TEXT_COLOR_YELLOW + "Logged out.")) {
+        while (!result.equals(SET_TEXT_COLOR_YELLOW + "Logged out.\n")) {
             printPrompt();
             String line = scanner.nextLine();
             StringBuilder id = new StringBuilder();
@@ -80,14 +79,9 @@ public class Repl {
                     team = true;
                 } else {
                     watching = false;
-                    if (result.equals("WHITE")) {
-                        team = true;
-                    } else {
-                        team = false;
-                    }
+                    team = result.equals("WHITE");
                 }
                 gameplay();
-                id.setLength(0);
                 mode = "Chess";
             } else {
                 System.out.println(SET_TEXT_COLOR_RED + result);
@@ -97,6 +91,18 @@ public class Repl {
 
     public void gameplay() {
         mode = "Chess Game";
+
+        gamePlayClient.initializeGame(authToken, team, gameID);
+
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while (!result.equals(SET_TEXT_COLOR_YELLOW + "Leaving gameplay.\n")) {
+            printPrompt();
+            String line = scanner.nextLine();
+            System.out.println();
+            result = gamePlayClient.eval(line, authToken);
+            System.out.println(SET_TEXT_COLOR_RED + result);
+        }
     }
 
     private void printPrompt() {
