@@ -28,6 +28,9 @@ public class GamePlayClient {
     private String whiteColor;
     private String blackColor;
     private String txtColor;
+    private String fgColor1;
+    private String fgColor2;
+    private String fgColor3;
 
     public GamePlayClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -41,6 +44,9 @@ public class GamePlayClient {
         whiteColor = SET_TEXT_COLOR_WHITE;
         blackColor = SET_TEXT_COLOR_DARK_GREY;
         txtColor = SET_TEXT_COLOR_LIGHT_GREY;
+        fgColor1 = SET_TEXT_COLOR_LIGHT_GREY;
+        fgColor2 = SET_TEXT_COLOR_BLACK;
+        fgColor3 = SET_TEXT_COLOR_DARK_GREY;
     }
 
     public void initializeGame(String authToken, boolean color, int id) {
@@ -87,13 +93,13 @@ public class GamePlayClient {
 
     public void drawWhite() {
         ChessBoard board = game.getBoard();
-        System.out.print(edgeColor + txtColor + EMPTY);
+        System.out.print(edgeColor + txtColor + "  ");
         for (int i = 0; i < 8; i++) {
-            System.out.print("  " + letters[i] + "  ");
+            System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
         }
-        System.out.println(edgeColor + txtColor + EMPTY);
+        System.out.println("    " + RESET_BG_COLOR);
         for (int i = 0; i < 8; i++) {
-            System.out.print(edgeColor + txtColor + "  " + (8 - i) + "  ");
+            System.out.print(edgeColor + txtColor + " " + (8 - i) + " ");
             for (int k = 0; k < 8; k++) {
                 if ((k + i) % 2 == 0) {
                     System.out.print(bgColor1);
@@ -102,7 +108,11 @@ public class GamePlayClient {
                 }
                 ChessPiece piece = board.getPiece(new ChessPosition(8 - i, k + 1));
                 if (piece == null) {
-                    System.out.print(EMPTY);
+                    if ((k + i) % 2 == 0) {
+                        System.out.print(fgColor1 + BLACK_KING);
+                    } else {
+                        System.out.print(fgColor2 + BLACK_KING);
+                    }
                 } else {
                     if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                         System.out.print(whiteColor);
@@ -119,17 +129,67 @@ public class GamePlayClient {
                     }
                 }
             }
-            System.out.println(edgeColor + txtColor + "  " + (8 - i) + "  ");
+            System.out.println(edgeColor + txtColor + " " + (8 - i) + " " + RESET_BG_COLOR);
         }
-        System.out.print(edgeColor + txtColor + EMPTY);
+        System.out.print(edgeColor + txtColor + "  ");
         for (int i = 0; i < 8; i++) {
-            System.out.print("  " + letters[i] + "  ");
+            System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
         }
-        System.out.println(edgeColor + txtColor + EMPTY + "\n");
+        System.out.println("    " + RESET_BG_COLOR + "\n");
     }
 
     public void drawBlack() {
+        ChessBoard board = game.getBoard();
+        System.out.print(edgeColor + txtColor + "  ");
+        // Reverse letters for Black's perspective
+        for (int i = 7; i >= 0; i--) {
+            System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
+        }
+        System.out.println("    " + RESET_BG_COLOR);
 
+        for (int i = 7; i >= 0; i--) { // Reverse row iteration
+            System.out.print(edgeColor + txtColor + " " + (8 - i) + " ");
+
+            for (int k = 7; k >= 0; k--) { // Reverse column iteration
+                if ((k + i) % 2 == 0) {
+                    System.out.print(bgColor1);
+                } else {
+                    System.out.print(bgColor2);
+                }
+
+                ChessPiece piece = board.getPiece(new ChessPosition(8 - i, k + 1));
+                if (piece == null) {
+                    if ((k + i) % 2 == 0) {
+                        System.out.print(fgColor1 + BLACK_KING);
+                    } else {
+                        System.out.print(fgColor2 + BLACK_KING);
+                    }
+                } else {
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        System.out.print(whiteColor);
+                    } else {
+                        System.out.print(blackColor);
+                    }
+                    switch (piece.getPieceType()) {
+                        case KING -> System.out.print(BLACK_KING);
+                        case QUEEN -> System.out.print(BLACK_QUEEN);
+                        case BISHOP -> System.out.print(BLACK_BISHOP);
+                        case KNIGHT -> System.out.print(BLACK_KNIGHT);
+                        case ROOK -> System.out.print(BLACK_ROOK);
+                        case PAWN -> System.out.print(BLACK_PAWN);
+                    }
+                }
+            }
+
+            System.out.println(edgeColor + txtColor + " " + (8 - i) + " " + RESET_BG_COLOR);
+        }
+
+        System.out.print(edgeColor + txtColor + "  ");
+        // Reverse letters again at the bottom
+        for (int i = 7; i >= 0; i--) {
+            System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
+        }
+        System.out.println("    " + RESET_BG_COLOR + "\n");
     }
 
     public String leave() {
