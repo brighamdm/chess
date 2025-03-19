@@ -27,8 +27,9 @@ public class LoggedInClient {
             } catch (Exception ex) {
                 System.out.println("\nFailed to initialize list.\n");
             }
+        } else {
+            System.out.println("Failed to initialize list.\n");
         }
-        System.out.println("Failed to initialize list.\n");
     }
 
     public String eval(String line, String authToken, StringBuilder id) {
@@ -55,11 +56,15 @@ public class LoggedInClient {
                 ListResult listResult = server.list(new ListRequest(authToken));
                 gamesList = (ArrayList<GameData>) listResult.games();
                 StringBuilder result = new StringBuilder();
-                for (int i = 0; i < listResult.games().size(); i++) {
-                    GameData game = listResult.games().get(i);
-                    String white = (game.whiteUsername() == null) ? "   White empty" : "   White: " + game.whiteUsername();
-                    String black = (game.blackUsername() == null) ? "   Black empty" : "   Black: " + game.blackUsername();
-                    result.append(i).append(". Game name: ").append(game.gameName()).append(white).append(black).append("\n");
+                if (!listResult.games().isEmpty()) {
+                    for (int i = 0; i < listResult.games().size(); i++) {
+                        GameData game = listResult.games().get(i);
+                        String white = (game.whiteUsername() == null) ? "   White empty" : "   White: " + game.whiteUsername();
+                        String black = (game.blackUsername() == null) ? "   Black empty" : "   Black: " + game.blackUsername();
+                        result.append(i + 1).append(". Game name: ").append(game.gameName()).append(white).append(black).append("\n");
+                    }
+                } else {
+                    result.append("No games to list.\n");
                 }
                 return SET_TEXT_COLOR_BLUE + result;
             } catch (Exception ex) {
@@ -73,7 +78,7 @@ public class LoggedInClient {
         if (authToken != null && params.length >= 1) {
             try {
                 CreateResult createResult = server.create(new CreateRequest(params[0], authToken));
-                return SET_TEXT_COLOR_BLUE + "Successfully created game " + params[0];
+                return SET_TEXT_COLOR_BLUE + "Successfully created game " + params[0] + "\n";
             } catch (Exception ex) {
                 throw new ResponseException(400, ex.getMessage() + "Expected: <GAME NAME>\n");
             }

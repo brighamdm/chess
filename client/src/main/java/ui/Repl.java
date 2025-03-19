@@ -15,6 +15,7 @@ public class Repl {
     private boolean watching;
     private boolean team;
     private int gameID;
+    private String mode;
 
     public Repl(String serverUrl) {
         authToken = null;
@@ -31,6 +32,7 @@ public class Repl {
     }
 
     public void run() {
+        mode = "Chess Login";
         System.out.println(ERASE_SCREEN + SET_TEXT_COLOR_LIGHT_GREY + BLACK_QUEEN +
                 " Welcome to Chess. Sign in to start. " + BLACK_QUEEN);
         System.out.print(startClient.help());
@@ -47,17 +49,19 @@ public class Repl {
             System.out.println(SET_TEXT_COLOR_RED + result);
 
             if (!auth.isEmpty()) {
-                authToken = String.valueOf(auth);
+                authToken = auth.toString();
                 loggedIn();
                 auth.setLength(0);
+                mode = "Chess";
             }
         }
     }
 
     public void loggedIn() {
+        mode = "Chess";
+
         // System.out.print(loggedInClient.help());
         // System.out.println();
-
         loggedInClient.initializeList(authToken);
 
         Scanner scanner = new Scanner(System.in);
@@ -84,6 +88,7 @@ public class Repl {
                 }
                 gameplay();
                 id.setLength(0);
+                mode = "Chess";
             } else {
                 System.out.println(SET_TEXT_COLOR_RED + result);
             }
@@ -91,10 +96,10 @@ public class Repl {
     }
 
     public void gameplay() {
-
+        mode = "Chess Game";
     }
 
     private void printPrompt() {
-        System.out.print(SET_TEXT_COLOR_GREEN + ">>> ");
+        System.out.print(SET_TEXT_COLOR_GREEN + mode + " >>> ");
     }
 }
