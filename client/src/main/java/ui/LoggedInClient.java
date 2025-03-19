@@ -109,7 +109,7 @@ public class LoggedInClient {
     }
 
     public String watch(String authToken, StringBuilder returnID, String... params) throws ResponseException {
-        if (authToken != null && params.length >= 2 && !gamesList.isEmpty()) {
+        if (authToken != null && params.length >= 1 && !gamesList.isEmpty()) {
             int id;
             try {
                 id = Integer.parseInt(params[0]);
