@@ -1,5 +1,6 @@
 package service;
 
+import com.*;
 import dataaccess.DataAccessException;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;

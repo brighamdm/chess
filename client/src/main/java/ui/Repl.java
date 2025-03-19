@@ -24,11 +24,11 @@ public class Repl {
         gamePlayClient = new GamePlayClient(serverUrl);
 
         // Uncomment if wanting to clear database
-//        try {
-//            startClient.clear();
-//        } catch (ResponseException ex) {
-//            System.out.println("Failed to clear database");
-//        }
+        try {
+            startClient.clear();
+        } catch (ResponseException ex) {
+            System.out.println("Failed to clear database");
+        }
     }
 
     public void run() {

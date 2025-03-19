@@ -1,7 +1,10 @@
 package ui;
 
+import com.LoginRequest;
+import com.LoginResult;
+import com.RegisterRequest;
+import com.RegisterResult;
 import exception.ResponseException;
-import model.*;
 import serverfacade.ServerFacade;
 
 import java.util.Arrays;

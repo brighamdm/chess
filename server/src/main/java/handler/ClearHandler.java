@@ -1,7 +1,7 @@
 package handler;
 
 import dataaccess.DataAccessException;
-import model.ClearResult;
+import com.ClearResult;
 import service.ClearService;
 import spark.*;
 

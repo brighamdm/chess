@@ -1,5 +1,6 @@
 package ui;
 
+import com.*;
 import exception.ResponseException;
 import model.*;
 import serverfacade.ServerFacade;

@@ -1,7 +1,7 @@
 package handler;
 
+import com.*;
 import dataaccess.DataAccessException;
-import model.*;
 import service.BadRequestException;
 import service.GameService;
 import service.UnauthorizedException;

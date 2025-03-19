@@ -5,8 +5,8 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.ResponseException;
-import model.ListRequest;
-import model.ListResult;
+import com.ListRequest;
+import com.ListResult;
 import serverfacade.ServerFacade;
 
 import java.util.Arrays;

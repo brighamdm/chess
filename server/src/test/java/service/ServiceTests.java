@@ -1,8 +1,8 @@
 package service;
 
+import com.*;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
-import model.*;
 import org.junit.jupiter.api.*;
 
 public class ServiceTests {

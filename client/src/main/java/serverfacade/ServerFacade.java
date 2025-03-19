@@ -1,8 +1,8 @@
 package serverfacade;
 
+import com.*;
 import com.google.gson.Gson;
 import exception.ResponseException;
-import model.*;
 
 import java.io.*;
 import java.net.*;

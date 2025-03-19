@@ -1,8 +1,8 @@
 package handler;
 
+import com.*;
 import dataaccess.DataAccessException;
 import spark.*;
-import model.*;
 import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UnavailableException;

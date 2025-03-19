@@ -1,16 +1,16 @@
 package client;
 
+import com.*;
 import exception.ResponseException;
 import org.junit.jupiter.api.*;
 import server.Server;
-import model.*;
 import serverfacade.ServerFacade;
 
 public class ServerFacadeTests {
 
     private static Server server;
     private static ServerFacade serverFacade;
-    private static final String serverUrl = "http://localhost:";
+    private static final String SERVER_URL = "http://localhost:";
 
     @BeforeAll
     public static void init() {
@@ -18,7 +18,7 @@ public class ServerFacadeTests {
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
 
-        serverFacade = new ServerFacade(serverUrl + port);
+        serverFacade = new ServerFacade(SERVER_URL + port);
     }
 
     @AfterAll
