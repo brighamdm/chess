@@ -12,6 +12,9 @@ public class Repl {
     private StartClient startClient;
     private LoggedInClient loggedInClient;
     private GamePlayClient gamePlayClient;
+    private boolean watching;
+    private boolean team;
+    private int gameID;
 
     public Repl(String serverUrl) {
         authToken = null;
@@ -55,14 +58,35 @@ public class Repl {
         // System.out.print(loggedInClient.help());
         // System.out.println();
 
+        loggedInClient.initializeList(authToken);
+
         Scanner scanner = new Scanner(System.in);
         var result = "";
         while (!result.equals(SET_TEXT_COLOR_YELLOW + "Logged out.")) {
             printPrompt();
             String line = scanner.nextLine();
+            StringBuilder id = new StringBuilder();
             System.out.println();
-            result = loggedInClient.eval(line, authToken);
-            System.out.println(SET_TEXT_COLOR_RED + result);
+            result = loggedInClient.eval(line, authToken, id);
+
+            if (!id.isEmpty()) {
+                gameID = Integer.parseInt(id.toString());
+                if (result.equals("watching")) {
+                    watching = true;
+                    team = true;
+                } else {
+                    watching = false;
+                    if (result.equals("WHITE")) {
+                        team = true;
+                    } else {
+                        team = false;
+                    }
+                }
+                gameplay();
+                id.setLength(0);
+            } else {
+                System.out.println(SET_TEXT_COLOR_RED + result);
+            }
         }
     }
 
