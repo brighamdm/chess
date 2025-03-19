@@ -33,9 +33,8 @@ public class Repl {
 
     public void run() {
         mode = "Chess Login";
-        System.out.println(ERASE_SCREEN + SET_TEXT_COLOR_LIGHT_GREY + BLACK_QUEEN +
-                " Welcome to Chess. Sign in to start. " + BLACK_QUEEN);
-        System.out.print(startClient.help());
+        System.out.println("\n" + ERASE_SCREEN + SET_TEXT_COLOR_LIGHT_GREY + BLACK_QUEEN +
+                " Welcome to Chess. Type help to get started. " + BLACK_QUEEN);
         System.out.println();
 
         Scanner scanner = new Scanner(System.in);
