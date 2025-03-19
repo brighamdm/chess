@@ -77,4 +77,8 @@ public class StartClient {
                 Print this message: "h", "help"
                 """;
     }
+
+    public void clear() throws ResponseException {
+        server.clear();
+    }
 }

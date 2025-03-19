@@ -1,5 +1,7 @@
 package ui;
 
+import exception.ResponseException;
+
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -16,6 +18,13 @@ public class Repl {
         startClient = new StartClient(serverUrl);
         loggedInClient = new LoggedInClient(serverUrl);
         gamePlayClient = new GamePlayClient(serverUrl);
+
+        // Uncomment if wanting to clear database
+//        try {
+//            startClient.clear();
+//        } catch (ResponseException ex) {
+//            System.out.println("Failed to clear database");
+//        }
     }
 
     public void run() {
@@ -43,7 +52,18 @@ public class Repl {
     }
 
     public void loggedIn() {
-        System.out.println("LOGGED IN\n");
+        // System.out.print(loggedInClient.help());
+        // System.out.println();
+
+        Scanner scanner = new Scanner(System.in);
+        var result = "";
+        while (!result.equals(SET_TEXT_COLOR_YELLOW + "Logged out.")) {
+            printPrompt();
+            String line = scanner.nextLine();
+            System.out.println();
+            result = loggedInClient.eval(line, authToken);
+            System.out.println(SET_TEXT_COLOR_RED + result);
+        }
     }
 
     public void gameplay() {
