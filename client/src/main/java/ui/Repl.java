@@ -9,9 +9,9 @@ import static ui.EscapeSequences.*;
 public class Repl {
 
     private String authToken;
-    private StartClient startClient;
-    private LoggedInClient loggedInClient;
-    private GamePlayClient gamePlayClient;
+    private final StartClient startClient;
+    private final LoggedInClient loggedInClient;
+    private final GamePlayClient gamePlayClient;
     private boolean watching;
     private boolean team;
     private int gameID;

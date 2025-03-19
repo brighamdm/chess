@@ -5,19 +5,17 @@ import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.ResponseException;
-import model.GameData;
 import model.ListRequest;
 import model.ListResult;
 import serverfacade.ServerFacade;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import static ui.EscapeSequences.*;
 
 public class GamePlayClient {
 
-    private ServerFacade server;
+    private final ServerFacade server;
     private int team;
     private int gameID;
     private ChessGame game;
