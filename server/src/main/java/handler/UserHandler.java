@@ -19,6 +19,7 @@ public class UserHandler implements Handler {
     public Object registerHandler(Request req, Response res)
             throws UnavailableException, BadRequestException, DataAccessException {
 
+
         RegisterRequest request = GSON.fromJson(req.body(), RegisterRequest.class);
 
         RegisterResult result = userService.register(request);

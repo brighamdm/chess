@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
 
+import java.awt.desktop.SystemEventListener;
 import java.io.*;
 import java.net.*;
 
@@ -59,7 +60,6 @@ public class ServerFacade {
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
-
             if (Objects.equals(method, "GET")) {
                 ListRequest listRequest = (ListRequest) request;
                 http.setRequestProperty("Authorization", listRequest.authToken());
@@ -91,13 +91,12 @@ public class ServerFacade {
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
-            try (InputStream respErr = http.getErrorStream()) {
-                if (respErr != null) {
-                    throw ResponseException.fromJson(respErr);
-                }
+            switch (status) {
+                case 400 -> throw new ResponseException(status, "Bad Request");
+                case 401 -> throw new ResponseException(status, "Unauthorized");
+                case 403 -> throw new ResponseException(status, "Already Taken");
+                default -> throw new ResponseException(status, null);
             }
-
-            throw new ResponseException(status, "other failure: " + status);
         }
     }
 

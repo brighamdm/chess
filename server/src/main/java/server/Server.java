@@ -87,9 +87,8 @@ public class Server {
             status = 666;
             System.out.println(body);
         }
-
-        res.type("application/json");
         res.status(status);
+        res.type("application/json");
         res.body(body);
     }
 }
