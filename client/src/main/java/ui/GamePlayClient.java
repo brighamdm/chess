@@ -81,93 +81,53 @@ public class GamePlayClient {
         if (team == -1) {
             throw new ResponseException(400, "Team not set.\n");
         }
-        if (team == 1) {
-            drawWhite();
-        } else {
-            drawBlack();
-        }
+        drawBoard(team == 1);
         return null;
     }
 
-    public void drawWhite() {
+    public void drawBoard(boolean isWhitePerspective) {
         ChessBoard board = game.getBoard();
+
         System.out.print(edgeColor + txtColor + "  ");
-        for (int i = 0; i < 8; i++) {
-            System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
+
+        // Determine column labels order
+        if (isWhitePerspective) {
+            for (int i = 0; i < 8; i++) {
+                System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
+            }
+        } else {
+            for (int i = 7; i >= 0; i--) {
+                System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
+            }
         }
+
         System.out.println("    " + RESET_BG_COLOR);
+
+        // Determine row iteration order
         for (int i = 0; i < 8; i++) {
-            System.out.print(edgeColor + txtColor + " " + (8 - i) + " ");
+            int row = isWhitePerspective ? 8 - i : i + 1;
+            System.out.print(edgeColor + txtColor + " " + row + " ");
+
+            // Determine column iteration order
             for (int k = 0; k < 8; k++) {
-                if ((k + i) % 2 == 0) {
-                    System.out.print(bgColor1);
-                } else {
-                    System.out.print(bgColor2);
-                }
-                ChessPiece piece = board.getPiece(new ChessPosition(8 - i, k + 1));
-                if (piece == null) {
-                    if ((k + i) % 2 == 0) {
-                        System.out.print(fgColor1 + BLACK_KING);
-                    } else {
-                        System.out.print(fgColor2 + BLACK_KING);
-                    }
-                } else {
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                        System.out.print(whiteColor);
-                    } else {
-                        System.out.print(blackColor);
-                    }
-                    switch (piece.getPieceType()) {
-                        case KING -> System.out.print(BLACK_KING);
-                        case QUEEN -> System.out.print(BLACK_QUEEN);
-                        case BISHOP -> System.out.print(BLACK_BISHOP);
-                        case KNIGHT -> System.out.print(BLACK_KNIGHT);
-                        case ROOK -> System.out.print(BLACK_ROOK);
-                        case PAWN -> System.out.print(BLACK_PAWN);
-                    }
-                }
-            }
-            System.out.println(edgeColor + txtColor + " " + (8 - i) + " " + RESET_BG_COLOR);
-        }
-        System.out.print(edgeColor + txtColor + "  ");
-        for (int i = 0; i < 8; i++) {
-            System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
-        }
-        System.out.println("    " + RESET_BG_COLOR + "\n");
-    }
+                int col = isWhitePerspective ? k + 1 : 8 - k;
 
-    public void drawBlack() {
-        ChessBoard board = game.getBoard();
-        System.out.print(edgeColor + txtColor + "  ");
-        // Reverse letters for Black's perspective
-        for (int i = 7; i >= 0; i--) {
-            System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
-        }
-        System.out.println("    " + RESET_BG_COLOR);
-
-        for (int i = 7; i >= 0; i--) { // Reverse row iteration
-            System.out.print(edgeColor + txtColor + " " + (8 - i) + " ");
-
-            for (int k = 7; k >= 0; k--) { // Reverse column iteration
-                if ((k + i) % 2 == 0) {
+                if ((col - 1 + i) % 2 == 0) {
                     System.out.print(bgColor1);
                 } else {
                     System.out.print(bgColor2);
                 }
 
-                ChessPiece piece = board.getPiece(new ChessPosition(8 - i, k + 1));
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
                 if (piece == null) {
-                    if ((k + i) % 2 == 0) {
+                    if ((col - 1 + i) % 2 == 0) {
                         System.out.print(fgColor1 + BLACK_KING);
                     } else {
                         System.out.print(fgColor2 + BLACK_KING);
                     }
                 } else {
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                        System.out.print(whiteColor);
-                    } else {
-                        System.out.print(blackColor);
-                    }
+                    System.out.print(piece.getTeamColor() == ChessGame.TeamColor.WHITE ? whiteColor : blackColor);
+
                     switch (piece.getPieceType()) {
                         case KING -> System.out.print(BLACK_KING);
                         case QUEEN -> System.out.print(BLACK_QUEEN);
@@ -179,14 +139,22 @@ public class GamePlayClient {
                 }
             }
 
-            System.out.println(edgeColor + txtColor + " " + (8 - i) + " " + RESET_BG_COLOR);
+            System.out.println(edgeColor + txtColor + " " + row + " " + RESET_BG_COLOR);
         }
 
         System.out.print(edgeColor + txtColor + "  ");
-        // Reverse letters again at the bottom
-        for (int i = 7; i >= 0; i--) {
-            System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
+
+        // Print bottom column labels
+        if (isWhitePerspective) {
+            for (int i = 0; i < 8; i++) {
+                System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
+            }
+        } else {
+            for (int i = 7; i >= 0; i--) {
+                System.out.print(fgColor3 + HIDDEN_KING + txtColor + letters[i]);
+            }
         }
+
         System.out.println("    " + RESET_BG_COLOR + "\n");
     }
 
