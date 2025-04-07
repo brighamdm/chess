@@ -8,6 +8,7 @@ import exception.ResponseException;
 import com.ListRequest;
 import com.ListResult;
 import serverfacade.ServerFacade;
+import websocket.WebSocketFacade;
 
 import java.util.Arrays;
 
@@ -16,6 +17,7 @@ import static ui.EscapeSequences.*;
 public class GamePlayClient {
 
     private final ServerFacade server;
+    private final WebSocketFacade websocket;
     private int team;
     private int gameID;
     private ChessGame game;

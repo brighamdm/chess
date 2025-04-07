@@ -1,12 +1,14 @@
 package ui;
 
 import exception.ResponseException;
+import websocket.NotificationHandler;
+import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
-public class Repl {
+public class Repl implements NotificationHandler {
 
     private String authToken;
     private final StartClient startClient;
@@ -108,5 +110,11 @@ public class Repl {
 
     private void printPrompt() {
         System.out.print(SET_TEXT_COLOR_GREEN + mode + " >>> ");
+    }
+
+    @Override
+    public void notify(ServerMessage notification) {
+        System.out.println(notification.message());
+        printPrompt();
     }
 }
