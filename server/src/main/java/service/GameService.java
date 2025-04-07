@@ -54,7 +54,7 @@ public class GameService implements Service {
             GameData game = getGame(joinRequest.gameID());
             if (game != null) {
                 if (joinRequest.playerColor().equals("WHITE")) {
-                    if (game.whiteUsername() == null || game.whiteUsername().equals(auth.username())) {
+                    if (game.whiteUsername() == null) {
                         updateGame(new GameData(game.gameID(),
                                 auth.username(),
                                 game.blackUsername(),
@@ -66,7 +66,7 @@ public class GameService implements Service {
                         throw new UnavailableException("Already Taken");
                     }
                 } else if (joinRequest.playerColor().equals("BLACK")) {
-                    if (game.blackUsername() == null || game.blackUsername().equals(auth.username())) {
+                    if (game.blackUsername() == null) {
                         updateGame(new GameData(game.gameID(),
                                 game.whiteUsername(),
                                 auth.username(),
