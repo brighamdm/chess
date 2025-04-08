@@ -96,7 +96,7 @@ public class GamePlayClient {
     }
 
     public String highlight(String... params) {
-        return null;
+        return "";
     }
 
     public String draw() throws ResponseException {
@@ -190,9 +190,12 @@ public class GamePlayClient {
 
     public String makeMove(String authToken, String... params) throws ResponseException {
         boolean valid_input = true;
-
-        websocket.makeMove(authToken, gameID, toChessMove(params));
-        return null;
+        ChessMove move = toChessMove(params);
+        if (move == null) {
+            System.out.println(SET_TEXT_COLOR_RED + "Invalid Move\nExpected: <START_POSITION> <END_POSITION>");
+        }
+        websocket.makeMove(authToken, gameID, move);
+        return "";
     }
 
     public String leave(String authToken) throws ResponseException {
@@ -203,7 +206,7 @@ public class GamePlayClient {
 
     public String resign(String authToken) throws ResponseException {
         websocket.resign(authToken, gameID);
-        return null;
+        return "";
     }
 
     public String help() {
@@ -245,13 +248,13 @@ public class GamePlayClient {
                     case 'h' -> 8;
                     default -> -1;
                 });
-                int row = (int) params[0].charAt(1);
+                int row = params[0].charAt(1) - '0';
                 if (row > 0 && row < 9) {
                     startRow = row;
                 }
             }
             if (params[1].length() == 2) {
-                endCol = (switch (params[0].toLowerCase().charAt(0)) {
+                endCol = (switch (params[1].toLowerCase().charAt(0)) {
                     case 'a' -> 1;
                     case 'b' -> 2;
                     case 'c' -> 3;
@@ -262,7 +265,7 @@ public class GamePlayClient {
                     case 'h' -> 8;
                     default -> -1;
                 });
-                int row = (int) params[0].charAt(1);
+                int row = params[1].charAt(1) - '0';
                 if (row > 0 && row < 9) {
                     endRow = row;
                 }

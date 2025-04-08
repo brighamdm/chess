@@ -30,11 +30,11 @@ public class Repl implements NotificationHandler {
         gamePlayClient = new GamePlayClient(serverUrl, this);
 
         // Uncomment if wanting to clear database
-        try {
-            startClient.clear();
-        } catch (ResponseException ex) {
-            System.out.println("Failed to clear database");
-        }
+//        try {
+//            startClient.clear();
+//        } catch (ResponseException ex) {
+//            System.out.println("Failed to clear database");
+//        }
     }
 
     public void run() {
@@ -96,6 +96,16 @@ public class Repl implements NotificationHandler {
         mode = "Chess Game";
 
         gamePlayClient.initializeGame(authToken, team, gameID);
+        try {
+            gamePlayClient.connect(authToken);
+        } catch (ResponseException e) {
+            System.out.println("Failed to Connect");
+        }
+        try {
+            gamePlayClient.draw();
+        } catch (ResponseException e) {
+            System.out.println("Failed Draw");
+        }
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -114,6 +124,7 @@ public class Repl implements NotificationHandler {
     @Override
     public void notify(ServerMessage notification) {
         if (notification.getServerMessageType() == LOAD_GAME) {
+            System.out.println("Being told to load");
             LoadGameMessage msg = (LoadGameMessage) notification;
             gamePlayClient.setGame(msg.getGame());
             try {

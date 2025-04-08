@@ -5,6 +5,7 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.BadRequestException;
@@ -25,6 +26,12 @@ public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
     private final UserService userService = new UserService();
     private final GameService gameService = new GameService();
+
+    @OnWebSocketError
+    public void onError(Session session, Throwable error) throws IOException {
+        var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, error.getMessage());
+        session.getRemote().sendString(connections.notificationToJson(notification));
+    }
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws BadRequestException {
@@ -62,12 +69,17 @@ public class WebSocketHandler {
 
     private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException {
         try {
+            System.out.println("making move");
             GameData updatedGame = gameService.move(authToken, gameID, move);
+            if (updatedGame == null) {
+                System.out.println("game is null");
+            }
             var message = String.format("%s moved: %s", userService.getUsername(authToken), move.toString());
-            var messagenotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            var messageNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             var loadNotification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, updatedGame.game());
+            System.out.println("sending out messages");
             connections.broadcast(authToken, gameID, loadNotification);
-            connections.broadcast(authToken, gameID, messagenotification);
+            connections.broadcast(authToken, gameID, messageNotification);
             connections.message(authToken, gameID, loadNotification);
             boolean secondMessage = false;
             ChessGame.TeamColor team = updatedGame.game().getTeamTurn();
@@ -89,6 +101,7 @@ public class WebSocketHandler {
                 connections.message(authToken, gameID, gameNotification);
             }
         } catch (Exception e) {
+            System.out.println("excpetion caught in move");
             if (Objects.equals(e.getMessage(), "Unauthorized")) {
                 var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unauthorized");
                 session.getRemote().sendString(connections.notificationToJson(notification));
