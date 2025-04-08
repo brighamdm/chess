@@ -30,10 +30,7 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws BadRequestException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
-        MakeMoveCommand moveCommand = null;
-        if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
-            moveCommand = (MakeMoveCommand) command;
-        }
+        MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
         try {
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
@@ -55,10 +52,11 @@ public class WebSocketHandler {
             var message = String.format("%s has joined as .", userService.getUsername(authToken));
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
-            connections.message(authToken, gameID, new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameService.getGame(authToken, gameID)));
+            connections.message(authToken, gameID, new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameService.getGame(authToken, gameID)));
         } catch (Exception e) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Connect.");
-            connections.message(authToken, gameID, notification);
+            // connections.message(authToken, gameID, notification);
+            session.getRemote().sendString(connections.notificationToJson(notification));
         }
     }
 
@@ -66,19 +64,28 @@ public class WebSocketHandler {
         try {
             GameData updatedGame = gameService.move(authToken, gameID, move);
             var message = String.format("%s moved: %s", userService.getUsername(authToken), move.toString());
-            var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, message, updatedGame.game());
-            connections.broadcast(authToken, gameID, notification);
+            var messagenotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            var loadNotification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, updatedGame.game());
+            connections.broadcast(authToken, gameID, loadNotification);
+            connections.broadcast(authToken, gameID, messagenotification);
+            connections.message(authToken, gameID, loadNotification);
+            boolean secondMessage = false;
             ChessGame.TeamColor team = updatedGame.game().getTeamTurn();
             if (updatedGame.game().isInCheckmate(team)) {
+                secondMessage = true;
                 message = String.format("%s is in checkmate!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() : updatedGame.blackUsername());
             } else if (updatedGame.game().isInCheck(team)) {
+                secondMessage = true;
                 message = String.format("%s is in check!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() : updatedGame.blackUsername());
             } else if (updatedGame.game().isInStalemate(team)) {
+                secondMessage = true;
                 message = "Stalemate!";
             }
-            var gameNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-            connections.broadcast(authToken, gameID, gameNotification);
-            connections.message(authToken, gameID, gameNotification);
+            if (secondMessage) {
+                var gameNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+                connections.broadcast(authToken, gameID, gameNotification);
+                connections.message(authToken, gameID, gameNotification);
+            }
         } catch (Exception e) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move.");
             connections.message(authToken, gameID, notification);

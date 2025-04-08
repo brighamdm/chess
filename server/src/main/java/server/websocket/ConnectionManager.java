@@ -34,11 +34,11 @@ public class ConnectionManager {
                 removeList.add(c);
             }
         }
-
-        // Clean up any connections that were left open.
-        for (var c : removeList) {
-            connections.remove(c.authToken);
-        }
+//
+//        // Clean up any connections that were left open.
+//        for (var c : removeList) {
+//            connections.remove(c.authToken);
+//        }
     }
 
     public void message(String authToken, int gameID, ServerMessage notification) throws IOException {
