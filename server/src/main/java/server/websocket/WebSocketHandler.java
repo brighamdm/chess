@@ -3,14 +3,12 @@ package server.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.BadRequestException;
 import service.GameService;
-import service.UnauthorizedException;
 import service.UserService;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
@@ -100,10 +98,11 @@ public class WebSocketHandler {
 
     private void leave(String authToken, int gameID, Session session) throws IOException {
         try {
-            connections.remove(authToken);
+            gameService.leave(authToken, gameID);
             var message = String.format("%s has left.", userService.getUsername(authToken));
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
+            connections.remove(authToken);
         } catch (Exception e) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Disconnect.");
             connections.message(authToken, gameID, notification);
