@@ -6,6 +6,7 @@ import dataaccess.DataAccessException;
 import handler.ClearHandler;
 import handler.GameHandler;
 import handler.UserHandler;
+import server.websocket.WebSocketHandler;
 import service.BadRequestException;
 import service.UnauthorizedException;
 import service.UnavailableException;
@@ -18,6 +19,7 @@ public class Server {
     private final ClearHandler clearHandler;
     private final UserHandler userHandler;
     private final GameHandler gameHandler;
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
         this.clearHandler = new ClearHandler();
@@ -28,6 +30,7 @@ public class Server {
         } catch (DataAccessException e) {
             System.err.println("Warning: Database initialization failed: " + e.getMessage());
         }
+        webSocketHandler = new WebSocketHandler();
     }
 
     public Server(ClearHandler clearHandler, UserHandler userHandler, GameHandler gameHandler) {
@@ -39,12 +42,15 @@ public class Server {
         } catch (DataAccessException e) {
             System.err.println("Warning: Database initialization failed: " + e.getMessage());
         }
+        webSocketHandler = new WebSocketHandler();
     }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", clearHandler::clearHandler);
