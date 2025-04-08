@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import exception.ResponseException;
 import com.ListRequest;
 import com.ListResult;
@@ -21,6 +18,7 @@ public class GamePlayClient {
     private final WebSocketFacade websocket;
     private int team;
     private int gameID;
+    private boolean watching;
     private ChessGame game;
     private char[] letters;
     private String bgColor1;
@@ -71,6 +69,14 @@ public class GamePlayClient {
         }
     }
 
+    public void setWatching(boolean watching) {
+        this.watching = watching;
+    }
+
+    public void setGame(ChessGame game) {
+        this.game = game;
+    }
+
     public String eval(String line, String authToken) {
         try {
             var tokens = line.toLowerCase().split(" ");
@@ -78,12 +84,19 @@ public class GamePlayClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "r", "redraw" -> draw();
-                case "leave" -> leave();
-                default -> help();
+                case "leave" -> leave(authToken);
+                case "resign" -> watching ? null : resign(authToken);
+                case "m", "move" -> watching ? null : makeMove(authToken, params);
+                case "highlight" -> highlight(params);
+                default -> watching ? watchingHelp() : help();
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
+    }
+
+    public String highlight(String... params) {
+        return null;
     }
 
     public String draw() throws ResponseException {
@@ -171,9 +184,26 @@ public class GamePlayClient {
         System.out.println("    " + RESET_BG_COLOR);
     }
 
-    public String leave() {
+    public void connect(String authToken) throws ResponseException {
+        websocket.connect(authToken, gameID);
+    }
+
+    public String makeMove(String authToken, String... params) throws ResponseException {
+        boolean valid_input = true;
+
+        websocket.makeMove(authToken, gameID, toChessMove(params));
+        return null;
+    }
+
+    public String leave(String authToken) throws ResponseException {
+        websocket.leave(authToken, gameID);
         team = -1;
         return SET_TEXT_COLOR_YELLOW + "Leaving gameplay.";
+    }
+
+    public String resign(String authToken) throws ResponseException {
+        websocket.resign(authToken, gameID);
+        return null;
     }
 
     public String help() {
@@ -181,6 +211,66 @@ public class GamePlayClient {
                 \nOptions:
                 Redraw Chess Board: "r", "redraw"
                 Leave game: "leave"
+                Resign: "resign"
+                Make Move: "m" "move" <START_POSITION> <END_POSITION>
+                Highlight Legal Moves: "highlight" <POSITION>
                 """;
+    }
+
+    public String watchingHelp() {
+        return """
+                \nOptions:
+                Redraw Chess Board: "r", "redraw"
+                Leave game: "leave"
+                Highlight Legal Moves: "highlight" <POSITION>
+                """;
+    }
+
+    public ChessMove toChessMove(String... params) {
+        ChessMove move = null;
+        int startRow = -1;
+        int startCol = -1;
+        int endRow = -1;
+        int endCol = -1;
+        if (params.length == 2) {
+            if (params[0].length() == 2) {
+                startCol = (switch (params[0].toLowerCase().charAt(0)) {
+                    case 'a' -> 1;
+                    case 'b' -> 2;
+                    case 'c' -> 3;
+                    case 'd' -> 4;
+                    case 'e' -> 5;
+                    case 'f' -> 6;
+                    case 'g' -> 7;
+                    case 'h' -> 8;
+                    default -> -1;
+                });
+                int row = (int) params[0].charAt(1);
+                if (row > 0 && row < 9) {
+                    startRow = row;
+                }
+            }
+            if (params[1].length() == 2) {
+                endCol = (switch (params[0].toLowerCase().charAt(0)) {
+                    case 'a' -> 1;
+                    case 'b' -> 2;
+                    case 'c' -> 3;
+                    case 'd' -> 4;
+                    case 'e' -> 5;
+                    case 'f' -> 6;
+                    case 'g' -> 7;
+                    case 'h' -> 8;
+                    default -> -1;
+                });
+                int row = (int) params[0].charAt(1);
+                if (row > 0 && row < 9) {
+                    endRow = row;
+                }
+            }
+            if (startRow != -1 && startCol != -1 && endRow != -1 && endCol != -1) {
+                move = new ChessMove(new ChessPosition(startRow, startCol), new ChessPosition(endRow, endCol), ChessPiece.PieceType.QUEEN);
+            }
+        }
+        return move;
     }
 }

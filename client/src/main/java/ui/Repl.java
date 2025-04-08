@@ -96,11 +96,6 @@ public class Repl implements NotificationHandler {
         mode = "Chess Game";
 
         gamePlayClient.initializeGame(authToken, team, gameID);
-        try {
-            gamePlayClient.draw();
-        } catch (ResponseException e) {
-            System.out.println("Failed Initial Draw");
-        }
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -120,6 +115,12 @@ public class Repl implements NotificationHandler {
     public void notify(ServerMessage notification) {
         if (notification.getServerMessageType() == LOAD_GAME) {
             LoadGameMessage msg = (LoadGameMessage) notification;
+            gamePlayClient.setGame(msg.getGame());
+            try {
+                gamePlayClient.draw();
+            } catch (ResponseException e) {
+                System.out.println("Failed Draw");
+            }
         } else if (notification.getServerMessageType() == NOTIFICATION) {
             NotificationMessage msg = (NotificationMessage) notification;
             System.out.println(SET_TEXT_COLOR_BLUE + msg.getMessage());
