@@ -5,6 +5,7 @@ import chess.ChessMove;
 import chess.InvalidMoveException;
 import com.*;
 import dataaccess.DataAccessException;
+import dataaccess.GameDAO;
 import model.*;
 
 import java.util.List;
@@ -16,24 +17,45 @@ import static dataaccess.GameDAO.*;
 
 public class GameService implements Service {
 
+    public boolean validGameID(int gameID) throws DataAccessException {
+        return (GameDAO.getGame(gameID) != null);
+    }
+
+    public ChessGame getGame(String authToken, int gameID) throws BadRequestException, UnauthorizedException, DataAccessException {
+        if (authExists(authToken)) {
+            GameData gameData = GameDAO.getGame(gameID);
+            if (gameData != null) {
+                return gameData.game();
+            } else {
+                throw new BadRequestException("Bad Request");
+            }
+        } else {
+            throw new UnauthorizedException("Unauthorized");
+        }
+    }
+
     public GameData move(String authToken, int gameID, ChessMove move) throws DataAccessException, BadRequestException, UnauthorizedException {
         if (move == null) {
             throw new BadRequestException("Invalid Move");
         }
 
         if (authExists(authToken)) {
-            GameData game = getGame(gameID);
+            GameData game = GameDAO.getGame(gameID);
             if (game != null) {
-                ChessGame chessGame = game.game();
-                try {
-                    chessGame.makeMove(move);
-                } catch (InvalidMoveException e) {
-                    throw new BadRequestException("Invalid Move");
+                if (!game.over()) {
+                    ChessGame chessGame = game.game();
+                    try {
+                        chessGame.makeMove(move);
+                    } catch (InvalidMoveException e) {
+                        throw new BadRequestException("Invalid Move");
+                    }
+                    GameData newGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame,
+                            game.game().isInCheckmate(game.game().getTeamTurn()) || game.game().isInStalemate(game.game().getTeamTurn()));
+                    updateGame(newGame);
+                    return newGame;
+                } else {
+                    throw new BadRequestException("Chess game is over.");
                 }
-                GameData newGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame,
-                        game.game().isInCheckmate(game.game().getTeamTurn()) || game.game().isInStalemate(game.game().getTeamTurn()));
-                updateGame(newGame);
-                return newGame;
             } else {
                 throw new BadRequestException("Invalid game.");
             }
@@ -49,7 +71,7 @@ public class GameService implements Service {
 
         AuthData authData = getAuth(authToken);
         if (authData != null) {
-            GameData gameData = getGame(gameID);
+            GameData gameData = GameDAO.getGame(gameID);
             if (gameData != null) {
                 updateGame(new GameData(gameData.gameID(),
                         (Objects.equals(gameData.whiteUsername(), authData.username())) ? null : gameData.whiteUsername(),
@@ -74,7 +96,7 @@ public class GameService implements Service {
             int gameID;
             while (true) {
                 gameID = ThreadLocalRandom.current().nextInt(1000, 10000);
-                GameData game = getGame(gameID);
+                GameData game = GameDAO.getGame(gameID);
                 if (game == null) {
                     game = new GameData(gameID,
                             null, null,
@@ -102,7 +124,7 @@ public class GameService implements Service {
 
         AuthData auth = getAuth(joinRequest.authToken());
         if (auth != null) {
-            GameData game = getGame(joinRequest.gameID());
+            GameData game = GameDAO.getGame(joinRequest.gameID());
             if (game != null) {
                 if (joinRequest.playerColor().equals("WHITE")) {
                     if (game.whiteUsername() == null) {

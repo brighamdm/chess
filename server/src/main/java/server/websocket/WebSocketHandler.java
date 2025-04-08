@@ -30,7 +30,10 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws BadRequestException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
-        MakeMoveCommand moveCommand = (MakeMoveCommand) command;
+        MakeMoveCommand moveCommand = null;
+        if (command.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE) {
+            moveCommand = (MakeMoveCommand) command;
+        }
         try {
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
@@ -45,10 +48,14 @@ public class WebSocketHandler {
 
     private void connect(String authToken, int gameID, Session session) throws IOException {
         try {
+            if (!gameService.validGameID(gameID)) {
+                throw new IOException("Invalid Game ID");
+            }
             connections.add(authToken, gameID, session);
             var message = String.format("%s has joined as .", userService.getUsername(authToken));
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
+            connections.message(authToken, gameID, new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameService.getGame(authToken, gameID)));
         } catch (Exception e) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Connect.");
             connections.message(authToken, gameID, notification);
@@ -61,7 +68,7 @@ public class WebSocketHandler {
             var message = String.format("%s moved: %s", userService.getUsername(authToken), move.toString());
             var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, message, updatedGame.game());
             connections.broadcast(authToken, gameID, notification);
-            ChessGame.TeamColor team = updatedGame.game().getTeamTurn()
+            ChessGame.TeamColor team = updatedGame.game().getTeamTurn();
             if (updatedGame.game().isInCheckmate(team)) {
                 message = String.format("%s is in checkmate!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() : updatedGame.blackUsername());
             } else if (updatedGame.game().isInCheck(team)) {

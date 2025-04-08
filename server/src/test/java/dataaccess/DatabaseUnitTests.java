@@ -145,7 +145,7 @@ public class DatabaseUnitTests {
     public void clearGameSuccess() throws DataAccessException {
         // Positive
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         GameDAO.clear();
         Assertions.assertNull(getGame(1234));
     }
@@ -154,7 +154,7 @@ public class DatabaseUnitTests {
     public void createGameSuccess() throws DataAccessException {
         // positive
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         GameData gameData = getGame(1234);
         Assertions.assertNotNull(gameData);
         Assertions.assertEquals("game1", gameData.gameName());
@@ -164,19 +164,19 @@ public class DatabaseUnitTests {
     public void createGameFail() throws DataAccessException {
         // Negative
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         Assertions.assertThrows(DataAccessException.class, () ->
                 createGame(new GameData(1234,
-                        null, null, "game1", new ChessGame())));
+                        null, null, "game1", new ChessGame(), false)));
     }
 
     @Test
     public void getGameSuccess() throws DataAccessException {
         // positive
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         createGame(new GameData(123,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         GameData gameData = getGame(123);
         Assertions.assertNotNull(gameData);
         Assertions.assertEquals("game1", gameData.gameName());
@@ -186,7 +186,7 @@ public class DatabaseUnitTests {
     public void getGameFail() throws DataAccessException {
         // negative
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         GameData gameData = getGame(123);
         Assertions.assertNull(gameData);
     }
@@ -194,9 +194,9 @@ public class DatabaseUnitTests {
     @Test
     public void listGameSuccess() throws DataAccessException {
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         createGame(new GameData(12345,
-                null, null, "game2", new ChessGame()));
+                null, null, "game2", new ChessGame(), false));
         ArrayList<GameData> games = (ArrayList<GameData>) listGames();
         Assertions.assertNotNull(games);
         Assertions.assertEquals("game1", games.get(0).gameName());
@@ -206,9 +206,9 @@ public class DatabaseUnitTests {
     @Test
     public void listGameFail() throws DataAccessException {
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         createGame(new GameData(12345,
-                null, null, "game2", new ChessGame()));
+                null, null, "game2", new ChessGame(), false));
         GameDAO.clear();
         ArrayList<GameData> games = (ArrayList<GameData>) listGames();
         Assertions.assertTrue(games.isEmpty());
@@ -217,12 +217,12 @@ public class DatabaseUnitTests {
     @Test
     public void updateGameSuccess() throws DataAccessException {
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         GameData gameData = getGame(1234);
         Assertions.assertNotNull(gameData);
         GameData newGame = new GameData(gameData.gameID(),
                 "bm888", gameData.blackUsername(),
-                gameData.gameName(), gameData.game());
+                gameData.gameName(), gameData.game(), false);
         updateGame(newGame);
         GameData retrievedGame = getGame(1234);
         Assertions.assertNotNull(retrievedGame);
@@ -232,12 +232,12 @@ public class DatabaseUnitTests {
     @Test
     public void updateGameFail() throws DataAccessException {
         createGame(new GameData(1234,
-                null, null, "game1", new ChessGame()));
+                null, null, "game1", new ChessGame(), false));
         GameData gameData = getGame(1234);
         Assertions.assertNotNull(gameData);
         GameData newGame = new GameData(123,
                 "bm888", gameData.blackUsername(),
-                gameData.gameName(), gameData.game());
+                gameData.gameName(), gameData.game(), false);
         updateGame(newGame);
         GameData retrievedGame = getGame(1234);
         Assertions.assertNotNull(retrievedGame);
