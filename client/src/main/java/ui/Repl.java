@@ -1,5 +1,6 @@
 package ui;
 
+import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.NotificationHandler;
 import websocket.messages.ErrorMessage;
@@ -122,22 +123,18 @@ public class Repl implements NotificationHandler {
     }
 
     @Override
-    public void notify(ServerMessage notification) {
-        if (notification.getServerMessageType() == LOAD_GAME) {
-            System.out.println("Being told to load");
-            LoadGameMessage msg = (LoadGameMessage) notification;
-            gamePlayClient.setGame(msg.getGame());
+    public void notify(ServerMessage msg, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, ErrorMessage errorMessage) {
+        if (msg.getServerMessageType() == LOAD_GAME) {
+            gamePlayClient.setGame(loadGameMessage.getGame());
             try {
                 gamePlayClient.draw();
             } catch (ResponseException e) {
                 System.out.println("Failed Draw");
             }
-        } else if (notification.getServerMessageType() == NOTIFICATION) {
-            NotificationMessage msg = (NotificationMessage) notification;
-            System.out.println(SET_TEXT_COLOR_BLUE + msg.getMessage());
-        } else if (notification.getServerMessageType() == ERROR) {
-            ErrorMessage msg = (ErrorMessage) notification;
-            System.out.println(SET_TEXT_COLOR_RED + msg.getErrorMessage());
+        } else if (msg.getServerMessageType() == NOTIFICATION) {
+            System.out.println(SET_TEXT_COLOR_BLUE + notificationMessage.getMessage());
+        } else if (msg.getServerMessageType() == ERROR) {
+            System.out.println(SET_TEXT_COLOR_RED + errorMessage.getErrorMessage());
         }
     }
 }

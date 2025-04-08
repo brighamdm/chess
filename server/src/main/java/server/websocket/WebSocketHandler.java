@@ -107,7 +107,7 @@ public class WebSocketHandler {
                 session.getRemote().sendString(connections.notificationToJson(notification));
             } else {
                 var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
-                connections.message(authToken, gameID, notification);
+                session.getRemote().sendString(connections.notificationToJson(notification));
             }
         }
     }
