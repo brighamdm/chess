@@ -56,11 +56,11 @@ public class GamePlayClient {
 
     public void initializeGame(String authToken, boolean color, int id) {
         team = color ? 1 : 0;
-        gameID = id;
         if (authToken != null) {
             try {
                 ListResult listResult = server.list(new ListRequest(authToken));
                 game = listResult.games().get(id - 1).game();
+                gameID = listResult.games().get(id - 1).gameID();
             } catch (Exception ex) {
                 System.out.println(ex.getMessage() + "\nFailed to initialize game.");
             }

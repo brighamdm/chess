@@ -61,7 +61,7 @@ public class WebSocketHandler {
             connections.message(authToken, gameID, new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,
                     gameService.getGame(authToken, gameID)));
         } catch (Exception e) {
-            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Connect.");
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Connect: " + e.getMessage());
             // connections.message(authToken, gameID, notification);
             session.getRemote().sendString(connections.notificationToJson(notification));
         }
@@ -69,7 +69,6 @@ public class WebSocketHandler {
 
     private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException {
         try {
-            System.out.println("making move");
             GameData updatedGame = gameService.move(authToken, gameID, move);
             if (updatedGame == null) {
                 System.out.println("game is null");
@@ -77,7 +76,6 @@ public class WebSocketHandler {
             var message = String.format("%s moved: %s", userService.getUsername(authToken), move.toString());
             var messageNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             var loadNotification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, updatedGame.game());
-            System.out.println("sending out messages");
             connections.broadcast(authToken, gameID, loadNotification);
             connections.broadcast(authToken, gameID, messageNotification);
             connections.message(authToken, gameID, loadNotification);
@@ -101,7 +99,6 @@ public class WebSocketHandler {
                 connections.message(authToken, gameID, gameNotification);
             }
         } catch (Exception e) {
-            System.out.println("excpetion caught in move");
             if (Objects.equals(e.getMessage(), "Unauthorized")) {
                 var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unauthorized");
                 session.getRemote().sendString(connections.notificationToJson(notification));

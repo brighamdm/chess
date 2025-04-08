@@ -31,11 +31,11 @@ public class Repl implements NotificationHandler {
         gamePlayClient = new GamePlayClient(serverUrl, this);
 
         // Uncomment if wanting to clear database
-//        try {
-//            startClient.clear();
-//        } catch (ResponseException ex) {
-//            System.out.println("Failed to clear database");
-//        }
+        try {
+            startClient.clear();
+        } catch (ResponseException ex) {
+            System.out.println("Failed to clear database");
+        }
     }
 
     public void run() {
@@ -102,11 +102,6 @@ public class Repl implements NotificationHandler {
         } catch (ResponseException e) {
             System.out.println("Failed to Connect");
         }
-        try {
-            gamePlayClient.draw();
-        } catch (ResponseException e) {
-            System.out.println("Failed Draw");
-        }
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -124,6 +119,7 @@ public class Repl implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage msg, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, ErrorMessage errorMessage) {
+        System.out.print("\r" + ERASE_LINE);
         if (msg.getServerMessageType() == LOAD_GAME) {
             gamePlayClient.setGame(loadGameMessage.getGame());
             try {
@@ -136,5 +132,7 @@ public class Repl implements NotificationHandler {
         } else if (msg.getServerMessageType() == ERROR) {
             System.out.println(SET_TEXT_COLOR_RED + errorMessage.getErrorMessage());
         }
+        printPrompt();
+        System.out.flush();
     }
 }
