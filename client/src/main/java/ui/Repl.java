@@ -2,11 +2,15 @@ package ui;
 
 import exception.ResponseException;
 import websocket.NotificationHandler;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
+import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 public class Repl implements NotificationHandler {
 
@@ -23,7 +27,7 @@ public class Repl implements NotificationHandler {
         authToken = null;
         startClient = new StartClient(serverUrl);
         loggedInClient = new LoggedInClient(serverUrl);
-        gamePlayClient = new GamePlayClient(serverUrl);
+        gamePlayClient = new GamePlayClient(serverUrl, this);
 
         // Uncomment if wanting to clear database
 //        try {
@@ -114,7 +118,13 @@ public class Repl implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage notification) {
-        System.out.println(notification.message());
-        printPrompt();
+        if (notification.getServerMessageType() == LOAD_GAME) {
+            LoadGameMessage msg = (LoadGameMessage) notification;
+            System.out.println("\n" + msg.getUsername() + " moved: " + );
+        } else if (notification.getServerMessageType() == NOTIFICATION) {
+            NotificationMessage msg = (NotificationMessage) notification;
+        } else if (notification.getServerMessageType() == ERROR) {
+            ErrorMessage msg = (ErrorMessage) notification;
+        }
     }
 }

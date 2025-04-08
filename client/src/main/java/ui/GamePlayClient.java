@@ -8,6 +8,7 @@ import exception.ResponseException;
 import com.ListRequest;
 import com.ListResult;
 import serverfacade.ServerFacade;
+import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
 import java.util.Arrays;
@@ -32,8 +33,14 @@ public class GamePlayClient {
     private String fgColor2;
     private String fgColor3;
 
-    public GamePlayClient(String serverUrl) {
-        server = new ServerFacade(serverUrl);
+    public GamePlayClient(String serverUrl, NotificationHandler notificationHandler) {
+        this.server = new ServerFacade(serverUrl);
+        try {
+            this.websocket = new WebSocketFacade(serverUrl, notificationHandler);
+        } catch (ResponseException e) {
+            System.out.println("\nFailed to connect to Websocket.");
+            throw new RuntimeException(e);
+        }
         team = -1;
 
         letters = new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
@@ -168,6 +175,17 @@ public class GamePlayClient {
         team = -1;
         return SET_TEXT_COLOR_YELLOW + "Leaving gameplay.";
     }
+
+//    public String signIn(String... params) throws ResponseException {
+//        if (params.length >= 1) {
+//            state = State.SIGNEDIN;
+//            visitorName = String.join("-", params);
+//            ws = new WebSocketFacade(serverUrl, notificationHandler);
+//            ws.enterPetShop(visitorName);
+//            return String.format("You signed in as %s.", visitorName);
+//        }
+//        throw new ResponseException(400, "Expected: <yourname>");
+//    }
 
     public String help() {
         return """

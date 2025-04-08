@@ -87,6 +87,33 @@ public class ChessMove {
         return myPosition.equals(endPosition);
     }
 
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append(switch (startPosition.getColumn()) {
+            case 1 -> "a";
+            case 2 -> "b";
+            case 3 -> "c";
+            case 4 -> "d";
+            case 5 -> "e";
+            case 6 -> "f";
+            case 7 -> "g";
+            case 8 -> "h";
+        });
+        result.append(startPosition.getRow()).append(" ");
+        result.append(switch (endPosition.getColumn()) {
+            case 1 -> "a";
+            case 2 -> "b";
+            case 3 -> "c";
+            case 4 -> "d";
+            case 5 -> "e";
+            case 6 -> "f";
+            case 7 -> "g";
+            case 8 -> "h";
+        });
+        result.append(endPosition.getRow());
+        return result.toString();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
