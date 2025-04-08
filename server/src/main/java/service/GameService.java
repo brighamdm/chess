@@ -70,7 +70,8 @@ public class GameService implements Service {
         if (authExists(authToken)) {
             GameData game = GameDAO.getGame(gameID);
             if (game != null && authData != null) {
-                ChessGame.TeamColor team = (Objects.equals(authData.username(), game.whiteUsername())) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+                ChessGame.TeamColor team = (Objects.equals(authData.username(), game.whiteUsername())) ? ChessGame.TeamColor.WHITE :
+                        ChessGame.TeamColor.BLACK;
                 if (!game.over() && team == game.game().getTeamTurn()) {
                     ChessGame chessGame = game.game();
                     try {

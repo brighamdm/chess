@@ -51,7 +51,8 @@ public class WebSocketHandler {
             var message = String.format("%s has joined as .", userService.getUsername(authToken));
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
-            connections.message(authToken, gameID, new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameService.getGame(authToken, gameID)));
+            connections.message(authToken, gameID, new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,
+                    gameService.getGame(authToken, gameID)));
         } catch (Exception e) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Connect.");
             // connections.message(authToken, gameID, notification);
@@ -72,10 +73,12 @@ public class WebSocketHandler {
             ChessGame.TeamColor team = updatedGame.game().getTeamTurn();
             if (updatedGame.game().isInCheckmate(team)) {
                 secondMessage = true;
-                message = String.format("%s is in checkmate!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() : updatedGame.blackUsername());
+                message = String.format("%s is in checkmate!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() :
+                        updatedGame.blackUsername());
             } else if (updatedGame.game().isInCheck(team)) {
                 secondMessage = true;
-                message = String.format("%s is in check!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() : updatedGame.blackUsername());
+                message = String.format("%s is in check!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() :
+                        updatedGame.blackUsername());
             } else if (updatedGame.game().isInStalemate(team)) {
                 secondMessage = true;
                 message = "Stalemate!";

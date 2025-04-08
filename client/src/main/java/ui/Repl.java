@@ -30,11 +30,11 @@ public class Repl implements NotificationHandler {
         gamePlayClient = new GamePlayClient(serverUrl, this);
 
         // Uncomment if wanting to clear database
-//        try {
-//            startClient.clear();
-//        } catch (ResponseException ex) {
-//            System.out.println("Failed to clear database");
-//        }
+        try {
+            startClient.clear();
+        } catch (ResponseException ex) {
+            System.out.println("Failed to clear database");
+        }
     }
 
     public void run() {

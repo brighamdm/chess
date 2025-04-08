@@ -176,17 +176,6 @@ public class GamePlayClient {
         return SET_TEXT_COLOR_YELLOW + "Leaving gameplay.";
     }
 
-//    public String signIn(String... params) throws ResponseException {
-//        if (params.length >= 1) {
-//            state = State.SIGNEDIN;
-//            visitorName = String.join("-", params);
-//            ws = new WebSocketFacade(serverUrl, notificationHandler);
-//            ws.enterPetShop(visitorName);
-//            return String.format("You signed in as %s.", visitorName);
-//        }
-//        throw new ResponseException(400, "Expected: <yourname>");
-//    }
-
     public String help() {
         return """
                 \nOptions:
