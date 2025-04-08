@@ -5,11 +5,25 @@ import dataaccess.DataAccessException;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.lang.invoke.LambdaConversionException;
+
 import static dataaccess.AuthDAO.*;
 import static dataaccess.UserDAO.createUser;
 import static dataaccess.UserDAO.getUser;
 
 public class UserService implements Service {
+
+    public String getUsername(String authToken) throws UnauthorizedException, DataAccessException {
+        if (authToken == null) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+        AuthData authData = getAuth(authToken);
+        if (authData != null) {
+            return authData.username();
+        } else {
+            throw new UnauthorizedException("Unauthorized");
+        }
+    }
 
     public RegisterResult register(RegisterRequest registerRequest)
             throws UnavailableException, BadRequestException, DataAccessException {

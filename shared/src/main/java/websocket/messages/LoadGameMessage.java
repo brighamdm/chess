@@ -6,8 +6,9 @@ public class LoadGameMessage extends ServerMessage {
     String username;
     ChessMove move;
 
-    public LoadGameMessage(ServerMessageType type, ChessMove move) {
+    public LoadGameMessage(ServerMessageType type, String username, ChessMove move) {
         super(type);
+        this.username = username;
         this.move = move;
     }
 
