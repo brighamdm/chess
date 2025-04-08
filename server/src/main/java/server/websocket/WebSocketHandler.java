@@ -20,6 +20,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -87,8 +88,13 @@ public class WebSocketHandler {
                 connections.message(authToken, gameID, gameNotification);
             }
         } catch (Exception e) {
-            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move.");
-            connections.message(authToken, gameID, notification);
+            if (Objects.equals(e.getMessage(), "Unauthorized")) {
+                var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unauthorized");
+                session.getRemote().sendString(connections.notificationToJson(notification));
+            } else {
+                var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
+                connections.message(authToken, gameID, notification);
+            }
         }
     }
 
@@ -104,7 +110,16 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(String authToken, int gameID, Session session) {
-
+    private void resign(String authToken, int gameID, Session session) throws IOException {
+        try {
+            gameService.resign(authToken, gameID);
+            var message = String.format("%s has resigned.", userService.getUsername(authToken));
+            var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(authToken, gameID, notification);
+            connections.message(authToken, gameID, notification);
+        } catch (Exception e) {
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Disconnect.");
+            connections.message(authToken, gameID, notification);
+        }
     }
 }

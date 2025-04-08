@@ -17,6 +17,33 @@ import static dataaccess.GameDAO.*;
 
 public class GameService implements Service {
 
+    public void resign(String authToken, int gameID) throws UnauthorizedException, DataAccessException, BadRequestException {
+        if (authToken == null) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+
+        AuthData authData = getAuth(authToken);
+        if (authExists(authToken) && authData != null) {
+            GameData gameData = GameDAO.getGame(gameID);
+            if (gameData == null) {
+                throw new BadRequestException("Bad Request");
+            }
+            if (!Objects.equals(authData.username(), gameData.whiteUsername()) && !Objects.equals(authData.username(), gameData.blackUsername())) {
+                throw new UnauthorizedException("Observers cannot resign");
+            }
+            if (gameData.over()) {
+                throw new UnauthorizedException("Game is already over");
+            }
+            updateGame(new GameData(gameData.gameID(),
+                    gameData.whiteUsername(),
+                    gameData.blackUsername(),
+                    gameData.gameName(),
+                    gameData.game(), true));
+        } else {
+            throw new UnauthorizedException("Unauthorized");
+        }
+    }
+
     public boolean validGameID(int gameID) throws DataAccessException {
         return (GameDAO.getGame(gameID) != null);
     }
