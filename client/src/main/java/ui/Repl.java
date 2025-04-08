@@ -120,11 +120,13 @@ public class Repl implements NotificationHandler {
     public void notify(ServerMessage notification) {
         if (notification.getServerMessageType() == LOAD_GAME) {
             LoadGameMessage msg = (LoadGameMessage) notification;
-            System.out.println("\n" + msg.getUsername() + " moved: " + );
+            System.out.println(SET_TEXT_COLOR_BLUE + "\n" + msg.getUsername() + " moved: " + msg.getMove().toString());
         } else if (notification.getServerMessageType() == NOTIFICATION) {
             NotificationMessage msg = (NotificationMessage) notification;
+            System.out.println(SET_TEXT_COLOR_BLUE + msg.getMessage());
         } else if (notification.getServerMessageType() == ERROR) {
             ErrorMessage msg = (ErrorMessage) notification;
+            System.out.println(SET_TEXT_COLOR_RED + msg.getErrorMessage());
         }
     }
 }

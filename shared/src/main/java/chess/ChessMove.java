@@ -98,6 +98,7 @@ public class ChessMove {
             case 6 -> "f";
             case 7 -> "g";
             case 8 -> "h";
+            default -> "";
         });
         result.append(startPosition.getRow()).append(" ");
         result.append(switch (endPosition.getColumn()) {
@@ -109,6 +110,7 @@ public class ChessMove {
             case 6 -> "f";
             case 7 -> "g";
             case 8 -> "h";
+            default -> "";
         });
         result.append(endPosition.getRow());
         return result.toString();
