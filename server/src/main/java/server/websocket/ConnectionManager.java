@@ -37,11 +37,11 @@ public class ConnectionManager {
         }
     }
 
-    public void message(String authToken, ServerMessage notification) throws IOException {
+    public void message(String authToken, int gameID, ServerMessage notification) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                if (c.authToken.equals(authToken)) {
+                if (c.authToken.equals(authToken) && c.gameID == gameID) {
                     c.send(notification.toString());
                 }
             } else {

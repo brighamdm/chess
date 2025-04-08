@@ -8,6 +8,7 @@ import dataaccess.DataAccessException;
 import model.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static dataaccess.AuthDAO.getAuth;
@@ -15,7 +16,7 @@ import static dataaccess.GameDAO.*;
 
 public class GameService implements Service {
 
-    public ChessGame move(String authToken, int gameID, ChessMove move) throws DataAccessException, BadRequestException, UnauthorizedException {
+    public GameData move(String authToken, int gameID, ChessMove move) throws DataAccessException, BadRequestException, UnauthorizedException {
         if (move == null) {
             throw new BadRequestException("Invalid Move");
         }
@@ -29,11 +30,33 @@ public class GameService implements Service {
                 } catch (InvalidMoveException e) {
                     throw new BadRequestException("Invalid Move");
                 }
-                GameData newGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame);
+                GameData newGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame,
+                        game.game().isInCheckmate(game.game().getTeamTurn()) || game.game().isInStalemate(game.game().getTeamTurn()));
                 updateGame(newGame);
-                return chessGame;
+                return newGame;
             } else {
                 throw new BadRequestException("Invalid game.");
+            }
+        } else {
+            throw new UnauthorizedException("Unauthorized");
+        }
+    }
+
+    public void leave(String authToken, int gameID) throws DataAccessException, BadRequestException, UnauthorizedException {
+        if ((authToken == null)) {
+            throw new BadRequestException("Bad Request");
+        }
+
+        AuthData authData = getAuth(authToken);
+        if (authData != null) {
+            GameData gameData = getGame(gameID);
+            if (gameData != null) {
+                updateGame(new GameData(gameData.gameID(),
+                        (Objects.equals(gameData.whiteUsername(), authData.username())) ? null : gameData.whiteUsername(),
+                        (Objects.equals(gameData.blackUsername(), authData.username())) ? null : gameData.blackUsername(),
+                        gameData.gameName(), gameData.game(), gameData.over()));
+            } else {
+                throw new BadRequestException("Bad Request");
             }
         } else {
             throw new UnauthorizedException("Unauthorized");
@@ -56,7 +79,8 @@ public class GameService implements Service {
                     game = new GameData(gameID,
                             null, null,
                             createRequest.gameName(),
-                            new ChessGame());
+                            new ChessGame(),
+                            false);
                     createGame(game);
 
                     break;
@@ -86,7 +110,8 @@ public class GameService implements Service {
                                 auth.username(),
                                 game.blackUsername(),
                                 game.gameName(),
-                                game.game()));
+                                game.game(),
+                                game.over()));
 
                         return new JoinResult();
                     } else {
@@ -98,7 +123,8 @@ public class GameService implements Service {
                                 game.whiteUsername(),
                                 auth.username(),
                                 game.gameName(),
-                                game.game()));
+                                game.game(),
+                                game.over()));
 
                         return new JoinResult();
                     } else {

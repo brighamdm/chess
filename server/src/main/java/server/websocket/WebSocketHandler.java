@@ -4,6 +4,7 @@ import chess.ChessGame;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -34,8 +35,8 @@ public class WebSocketHandler {
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
                 case MAKE_MOVE -> makeMove(command.getAuthToken(), command.getGameID(), moveCommand.getMove(), session);
-                case LEAVE -> ;
-                case RESIGN -> ;
+                case LEAVE -> leave(command.getAuthToken(), command.getGameID(), session);
+                case RESIGN -> resign(command.getAuthToken(), command.getGameID(), session);
             }
         } catch (Exception e) {
             throw new BadRequestException(e.getMessage());
@@ -45,23 +46,51 @@ public class WebSocketHandler {
     private void connect(String authToken, int gameID, Session session) throws IOException {
         try {
             connections.add(authToken, gameID, session);
-            var message = String.format("%s has joined as ", userService.getUsername(authToken));
+            var message = String.format("%s has joined as .", userService.getUsername(authToken));
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
         } catch (Exception e) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Connect.");
-            connections.message(authToken, notification);
+            connections.message(authToken, gameID, notification);
         }
     }
 
     private void makeMove(String authToken, int gameID, ChessMove move, Session session) throws IOException {
         try {
-            ChessGame updatedGame = gameService.move(authToken, gameID, move);
-            var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, userService.getUsername(authToken), move);
+            GameData updatedGame = gameService.move(authToken, gameID, move);
+            var message = String.format("%s moved: %s", userService.getUsername(authToken), move.toString());
+            var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, message, updatedGame.game());
             connections.broadcast(authToken, gameID, notification);
+            ChessGame.TeamColor team = updatedGame.game().getTeamTurn()
+            if (updatedGame.game().isInCheckmate(team)) {
+                message = String.format("%s is in checkmate!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() : updatedGame.blackUsername());
+            } else if (updatedGame.game().isInCheck(team)) {
+                message = String.format("%s is in check!", (team == ChessGame.TeamColor.WHITE) ? updatedGame.whiteUsername() : updatedGame.blackUsername());
+            } else if (updatedGame.game().isInStalemate(team)) {
+                message = "Stalemate!";
+            }
+            var gameNotification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(authToken, gameID, gameNotification);
+            connections.message(authToken, gameID, gameNotification);
         } catch (Exception e) {
             var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move.");
-            connections.message(authToken, notification);
+            connections.message(authToken, gameID, notification);
         }
+    }
+
+    private void leave(String authToken, int gameID, Session session) throws IOException {
+        try {
+            connections.remove(authToken);
+            var message = String.format("%s has left.", userService.getUsername(authToken));
+            var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            connections.broadcast(authToken, gameID, notification);
+        } catch (Exception e) {
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Disconnect.");
+            connections.message(authToken, gameID, notification);
+        }
+    }
+
+    private void resign(String authToken, int gameID, Session session) {
+
     }
 }
