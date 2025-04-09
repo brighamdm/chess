@@ -74,7 +74,8 @@ public class GameService implements Service {
         }
     }
 
-    public GameData moveFunctionality(String authToken, int gameID, ChessMove move, AuthData authData) throws BadRequestException, DataAccessException {
+    public GameData moveFunctionality(String authToken, int gameID, ChessMove move, AuthData authData)
+            throws BadRequestException, DataAccessException {
         GameData game = GameDAO.getGame(gameID);
         if (game != null && authData != null) {
             ChessGame.TeamColor team = (Objects.equals(authData.username(), game.whiteUsername())) ? ChessGame.TeamColor.WHITE :
