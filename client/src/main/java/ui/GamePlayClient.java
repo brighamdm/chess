@@ -55,7 +55,7 @@ public class GamePlayClient {
         bgColor2 = SET_BG_COLOR_BLACK;
         edgeColor = SET_BG_COLOR_DARK_GREY;
         whiteColor = SET_TEXT_COLOR_WHITE;
-        blackColor = SET_TEXT_COLOR_DARK_GREY;
+        blackColor = SET_TEXT_COLOR_DARK_PINK; // SET_TEXT_COLOR_DARK_GREY;
         txtColor = SET_TEXT_COLOR_LIGHT_GREY;
         fgColor1 = SET_TEXT_COLOR_LIGHT_GREY;
         fgColor2 = SET_TEXT_COLOR_BLACK;
