@@ -66,7 +66,7 @@ public class WebSocketHandler {
                 throw new IOException("Invalid Game ID");
             }
             connections.add(authToken, gameID, session);
-            var message = String.format("%s has joined as %s.", userService.getUsername(authToken), perspective);
+            var message = String.format("%s has joined as %s", userService.getUsername(authToken), perspective);
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
             connections.message(authToken, gameID, new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,
@@ -118,12 +118,12 @@ public class WebSocketHandler {
     private void leave(String authToken, int gameID, Session session) throws IOException {
         try {
             gameService.leave(authToken, gameID);
-            var message = String.format("%s has left.", userService.getUsername(authToken));
+            var message = String.format("%s has left", userService.getUsername(authToken));
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
             connections.remove(authToken);
         } catch (Exception e) {
-            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Disconnect.");
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Disconnect");
             connections.message(authToken, gameID, notification);
         }
     }
@@ -131,12 +131,12 @@ public class WebSocketHandler {
     private void resign(String authToken, int gameID, Session session) throws IOException {
         try {
             gameService.resign(authToken, gameID);
-            var message = String.format("%s has resigned.", userService.getUsername(authToken));
+            var message = String.format("%s has resigned", userService.getUsername(authToken));
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
             connections.message(authToken, gameID, notification);
         } catch (Exception e) {
-            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Resign.");
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Resign");
             connections.message(authToken, gameID, notification);
         }
     }

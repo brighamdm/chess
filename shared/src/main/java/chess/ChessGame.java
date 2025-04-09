@@ -126,6 +126,12 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (move == null || move.getStartPosition() == null || move.getEndPosition() == null) {
+            throw new InvalidMoveException("Invalid Move");
+        }
+        if (board.getPiece(move.getStartPosition()) == null) {
+            throw new InvalidMoveException("Invalid Move");
+        }
         clearEnPassant();
         boolean success = false;
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());

@@ -85,13 +85,13 @@ public class GameService implements Service {
                         updateGame(newGame);
                         return newGame;
                     } else {
-                        throw new BadRequestException("Not your turn.");
+                        throw new BadRequestException("Not your turn");
                     }
                 } else {
-                    throw new BadRequestException("Chess game is over.");
+                    throw new BadRequestException("Chess game is over");
                 }
             } else {
-                throw new BadRequestException("Invalid game.");
+                throw new BadRequestException("Invalid game");
             }
         } else {
             throw new UnauthorizedException("Unauthorized");

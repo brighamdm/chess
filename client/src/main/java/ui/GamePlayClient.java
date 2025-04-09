@@ -10,6 +10,7 @@ import websocket.WebSocketFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -36,6 +37,7 @@ public class GamePlayClient {
     private String hlBColor2;
     private String hlFColor1;
     private String hlFColor2;
+    private String hlSColor;
 
     public GamePlayClient(String serverUrl, NotificationHandler notificationHandler) {
         this.server = new ServerFacade(serverUrl);
@@ -62,6 +64,7 @@ public class GamePlayClient {
         hlBColor2 = SET_BG_COLOR_PURPLE;
         hlFColor1 = SET_TEXT_COLOR_LIGHT_PURPLE;
         hlFColor2 = SET_TEXT_COLOR_PURPLE;
+        hlSColor = SET_BG_COLOR_MAGENTA;
     }
 
     public void initializeGame(String authToken, boolean color, int id) {
@@ -110,13 +113,15 @@ public class GamePlayClient {
             ChessPosition pos = toChessPosition(params[0]);
             ArrayList<ChessMove> moves = (ArrayList<ChessMove>) game.validMoves(pos);
             ArrayList<ChessPosition> positions = new ArrayList<>();
+            ChessPosition startPosition = null;
             if (moves != null) {
                 for (ChessMove m : moves) {
                     positions.add(m.getEndPosition());
                 }
+                startPosition = moves.get(0).getStartPosition();
             }
             System.out.println("               ");
-            drawBoard(team == 1, positions);
+            drawBoard(team == 1, positions, startPosition);
             System.out.println();
             return "";
         } else {
@@ -129,13 +134,14 @@ public class GamePlayClient {
             throw new ResponseException(400, "Team not set.");
         }
         ArrayList<ChessPosition> emptyList = new ArrayList<>();
+        ChessPosition nullPosition = null;
         System.out.println("               ");
-        drawBoard(team == 1, emptyList);
+        drawBoard(team == 1, emptyList, nullPosition);
         System.out.println();
         return "";
     }
 
-    public void drawBoard(boolean isWhitePerspective, ArrayList<ChessPosition> positions) {
+    public void drawBoard(boolean isWhitePerspective, ArrayList<ChessPosition> positions, ChessPosition startPosition) {
         ChessBoard board = game.getBoard();
 
         System.out.print(edgeColor + txtColor + "  ");
@@ -174,8 +180,9 @@ public class GamePlayClient {
                     bgc1 = hlBColor1;
                     bgc2 = hlBColor2;
                 }
-
-                if ((col - 1 + i) % 2 == colorCheck) {
+                if (startPosition != null && (startPosition.getRow() == row && startPosition.getColumn() == col)) {
+                    System.out.print(hlSColor);
+                } else if ((col - 1 + i) % 2 == colorCheck) {
                     System.out.print(bgc1);
                 } else {
                     System.out.print(bgc2);
@@ -283,8 +290,30 @@ public class GamePlayClient {
     }
 
     public String resign(String authToken) throws ResponseException {
-        websocket.resign(authToken, gameID);
+        if (confirmResign()) {
+            websocket.resign(authToken, gameID);
+        }
         return "";
+    }
+
+    public boolean confirmResign() {
+        boolean result = false;
+        var prompt = SET_TEXT_COLOR_BLUE +
+                "Confirm Resignation: \"yes\", \"no\"\n" +
+                SET_TEXT_COLOR_GREEN +
+                "YES/NO >>> ";
+        Scanner scanner = new Scanner(System.in);
+        String cmd = null;
+        while (!result && !Objects.equals(cmd, "no")) {
+            System.out.print(prompt);
+            String line = scanner.nextLine();
+            var tokens = line.toLowerCase().split(" ");
+            cmd = (tokens.length > 0) ? tokens[0] : "";
+            if (Objects.equals(cmd, "yes")) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     public String help() {
