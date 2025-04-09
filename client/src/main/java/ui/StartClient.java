@@ -37,7 +37,7 @@ public class StartClient {
     }
 
     public String login(StringBuilder authToken, String... params) throws ResponseException {
-        if (params.length >= 2) {
+        if (params.length == 2) {
             try {
                 var username = params[0];
                 var password = params[1];
@@ -52,7 +52,7 @@ public class StartClient {
     }
 
     public String register(StringBuilder authToken, String... params) throws ResponseException {
-        if (params.length >= 3) {
+        if (params.length == 3) {
             try {
                 var username = params[0];
                 var password = params[1];

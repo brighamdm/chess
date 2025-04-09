@@ -8,7 +8,9 @@ import serverfacade.ServerFacade;
 import websocket.NotificationHandler;
 import websocket.WebSocketFacade;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
 
@@ -30,6 +32,10 @@ public class GamePlayClient {
     private String fgColor1;
     private String fgColor2;
     private String fgColor3;
+    private String hlBColor1;
+    private String hlBColor2;
+    private String hlFColor1;
+    private String hlFColor2;
 
     public GamePlayClient(String serverUrl, NotificationHandler notificationHandler) {
         this.server = new ServerFacade(serverUrl);
@@ -52,6 +58,10 @@ public class GamePlayClient {
         fgColor1 = SET_TEXT_COLOR_LIGHT_GREY;
         fgColor2 = SET_TEXT_COLOR_BLACK;
         fgColor3 = SET_TEXT_COLOR_DARK_GREY;
+        hlBColor1 = SET_BG_COLOR_LIGHT_PURPLE;
+        hlBColor2 = SET_BG_COLOR_PURPLE;
+        hlFColor1 = SET_TEXT_COLOR_LIGHT_PURPLE;
+        hlFColor2 = SET_TEXT_COLOR_PURPLE;
     }
 
     public void initializeGame(String authToken, boolean color, int id) {
@@ -95,21 +105,37 @@ public class GamePlayClient {
         }
     }
 
-    public String highlight(String... params) {
-        return "";
+    public String highlight(String... params) throws ResponseException {
+        if (params.length == 1) {
+            ChessPosition pos = toChessPosition(params[0]);
+            ArrayList<ChessMove> moves = (ArrayList<ChessMove>) game.validMoves(pos);
+            ArrayList<ChessPosition> positions = new ArrayList<>();
+            if (moves != null) {
+                for (ChessMove m : moves) {
+                    positions.add(m.getEndPosition());
+                }
+            }
+            System.out.println("               ");
+            drawBoard(team == 1, positions);
+            System.out.println();
+            return "";
+        } else {
+            throw new ResponseException(400, "Bad Input\nExpected <POSITION>");
+        }
     }
 
     public String draw() throws ResponseException {
         if (team == -1) {
             throw new ResponseException(400, "Team not set.");
         }
+        ArrayList<ChessPosition> emptyList = new ArrayList<>();
         System.out.println("               ");
-        drawBoard(team == 1);
+        drawBoard(team == 1, emptyList);
         System.out.println();
         return "";
     }
 
-    public void drawBoard(boolean isWhitePerspective) {
+    public void drawBoard(boolean isWhitePerspective, ArrayList<ChessPosition> positions) {
         ChessBoard board = game.getBoard();
 
         System.out.print(edgeColor + txtColor + "  ");
@@ -139,11 +165,20 @@ public class GamePlayClient {
                 int colorCheck = isWhitePerspective ? 0 : 1;
                 String hiddenColor1 = isWhitePerspective ? fgColor1 : fgColor2;
                 String hiddenColor2 = isWhitePerspective ? fgColor2 : fgColor1;
+                String bgc1 = bgColor1;
+                String bgc2 = bgColor2;
+
+                if (positions != null && positions.contains(new ChessPosition(row, col))) {
+                    hiddenColor1 = isWhitePerspective ? hlFColor1 : hlFColor2;
+                    hiddenColor2 = isWhitePerspective ? hlFColor2 : hlFColor1;
+                    bgc1 = hlBColor1;
+                    bgc2 = hlBColor2;
+                }
 
                 if ((col - 1 + i) % 2 == colorCheck) {
-                    System.out.print(bgColor1);
+                    System.out.print(bgc1);
                 } else {
-                    System.out.print(bgColor2);
+                    System.out.print(bgc2);
                 }
 
                 ChessPiece piece = board.getPiece(new ChessPosition(row, col));
@@ -199,13 +234,46 @@ public class GamePlayClient {
     }
 
     public String makeMove(String authToken, String... params) throws ResponseException {
-        boolean valid_input = true;
         ChessMove move = toChessMove(params);
-        if (move == null) {
-            System.out.println(SET_TEXT_COLOR_RED + "Invalid Move\nExpected: <START_POSITION> <END_POSITION>");
+        if (move != null) {
+            ChessPiece piece = game.getBoard().getPiece(move.getStartPosition());
+            ChessGame.TeamColor teamColor = (team == 1) ? ChessGame.TeamColor.WHITE : ChessGame.TeamColor.BLACK;
+            if ((piece != null) && (piece.getTeamColor() == teamColor)) {
+                if (piece.getPieceType() == ChessPiece.PieceType.PAWN &&
+                        (move.getEndPosition().getRow() == 1 || move.getEndPosition().getRow() == 8)) {
+                    move = new ChessMove(move.getStartPosition(), move.getEndPosition(), getPromotionPiece());
+                }
+                websocket.makeMove(authToken, gameID, move);
+                return "";
+            } else {
+                throw new ResponseException(400, "Invalid Move\nExpected: <START_POSITION> <END_POSITION>");
+            }
+        } else {
+            throw new ResponseException(400, "Invalid Move\nExpected: <START_POSITION> <END_POSITION>");
         }
-        websocket.makeMove(authToken, gameID, move);
-        return "";
+    }
+
+    public ChessPiece.PieceType getPromotionPiece() {
+        var prompt = SET_TEXT_COLOR_BLUE +
+                "Choose Promotion Piece: \"queen\", \"rook\", \"bishop\", \"knight\", \"pawn\"\n" +
+                SET_TEXT_COLOR_GREEN +
+                "Piece Type >>> ";
+        Scanner scanner = new Scanner(System.in);
+        ChessPiece.PieceType type = null;
+        while (type == null) {
+            System.out.print(prompt);
+            String line = scanner.nextLine();
+            var tokens = line.toLowerCase().split(" ");
+            var cmd = (tokens.length > 0) ? tokens[0] : "";
+            switch (cmd) {
+                case "queen" -> type = ChessPiece.PieceType.QUEEN;
+                case "rook" -> type = ChessPiece.PieceType.ROOK;
+                case "bishop" -> type = ChessPiece.PieceType.BISHOP;
+                case "knight" -> type = ChessPiece.PieceType.KNIGHT;
+                case "pawn" -> type = ChessPiece.PieceType.PAWN;
+            }
+        }
+        return type;
     }
 
     public String leave(String authToken) throws ResponseException {
@@ -239,49 +307,40 @@ public class GamePlayClient {
                 """;
     }
 
+    public ChessPosition toChessPosition(String pos) {
+        ChessPosition position = null;
+        int row = -1;
+        int col = -1;
+        if (pos.length() == 2) {
+            col = (switch (pos.toLowerCase().charAt(0)) {
+                case 'a' -> 1;
+                case 'b' -> 2;
+                case 'c' -> 3;
+                case 'd' -> 4;
+                case 'e' -> 5;
+                case 'f' -> 6;
+                case 'g' -> 7;
+                case 'h' -> 8;
+                default -> -1;
+            });
+            int tempRow = pos.charAt(1) - '0';
+            if (tempRow > 0 && tempRow < 9) {
+                row = tempRow;
+            }
+            if (row != -1 && col != -1) {
+                position = new ChessPosition(row, col);
+            }
+        }
+        return position;
+    }
+
     public ChessMove toChessMove(String... params) {
         ChessMove move = null;
-        int startRow = -1;
-        int startCol = -1;
-        int endRow = -1;
-        int endCol = -1;
         if (params.length == 2) {
-            if (params[0].length() == 2) {
-                startCol = (switch (params[0].toLowerCase().charAt(0)) {
-                    case 'a' -> 1;
-                    case 'b' -> 2;
-                    case 'c' -> 3;
-                    case 'd' -> 4;
-                    case 'e' -> 5;
-                    case 'f' -> 6;
-                    case 'g' -> 7;
-                    case 'h' -> 8;
-                    default -> -1;
-                });
-                int row = params[0].charAt(1) - '0';
-                if (row > 0 && row < 9) {
-                    startRow = row;
-                }
-            }
-            if (params[1].length() == 2) {
-                endCol = (switch (params[1].toLowerCase().charAt(0)) {
-                    case 'a' -> 1;
-                    case 'b' -> 2;
-                    case 'c' -> 3;
-                    case 'd' -> 4;
-                    case 'e' -> 5;
-                    case 'f' -> 6;
-                    case 'g' -> 7;
-                    case 'h' -> 8;
-                    default -> -1;
-                });
-                int row = params[1].charAt(1) - '0';
-                if (row > 0 && row < 9) {
-                    endRow = row;
-                }
-            }
-            if (startRow != -1 && startCol != -1 && endRow != -1 && endCol != -1) {
-                move = new ChessMove(new ChessPosition(startRow, startCol), new ChessPosition(endRow, endCol), null);
+            ChessPosition pos1 = toChessPosition(params[0]);
+            ChessPosition pos2 = toChessPosition(params[1]);
+            if (pos1 != null && pos2 != null) {
+                move = new ChessMove(pos1, pos2, null);
             }
         }
         return move;

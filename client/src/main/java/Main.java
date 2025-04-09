@@ -9,6 +9,8 @@ public class Main {
         }
 
         new Repl(serverUrl).run();
+        while (true) {
 
+        }
     }
 }
