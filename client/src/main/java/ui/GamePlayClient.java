@@ -85,8 +85,8 @@ public class GamePlayClient {
             return switch (cmd) {
                 case "r", "redraw" -> draw();
                 case "leave" -> leave(authToken);
-                case "resign" -> watching ? null : resign(authToken);
-                case "m", "move" -> watching ? null : makeMove(authToken, params);
+                case "resign" -> watching ? "" : resign(authToken);
+                case "m", "move" -> watching ? "" : makeMove(authToken, params);
                 case "highlight" -> highlight(params);
                 default -> watching ? watchingHelp() : help();
             };
@@ -103,7 +103,9 @@ public class GamePlayClient {
         if (team == -1) {
             throw new ResponseException(400, "Team not set.");
         }
+        System.out.println("               ");
         drawBoard(team == 1);
+        System.out.println();
         return "";
     }
 
@@ -185,7 +187,15 @@ public class GamePlayClient {
     }
 
     public void connect(String authToken) throws ResponseException {
-        websocket.connect(authToken, gameID);
+        int state;
+        if (watching) {
+            state = 2;
+        } else if (team == 1) {
+            state = 0;
+        } else {
+            state = 1;
+        }
+        websocket.connect(authToken, gameID, state);
     }
 
     public String makeMove(String authToken, String... params) throws ResponseException {
@@ -271,7 +281,7 @@ public class GamePlayClient {
                 }
             }
             if (startRow != -1 && startCol != -1 && endRow != -1 && endCol != -1) {
-                move = new ChessMove(new ChessPosition(startRow, startCol), new ChessPosition(endRow, endCol), ChessPiece.PieceType.QUEEN);
+                move = new ChessMove(new ChessPosition(startRow, startCol), new ChessPosition(endRow, endCol), null);
             }
         }
         return move;

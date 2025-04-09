@@ -11,6 +11,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import service.BadRequestException;
 import service.GameService;
 import service.UserService;
+import websocket.commands.ConnectCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ErrorMessage;
@@ -37,9 +38,11 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws BadRequestException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
+        ConnectCommand connectCommand = new Gson().fromJson(message, ConnectCommand.class);
         try {
             switch (command.getCommandType()) {
-                case CONNECT -> connect(command.getAuthToken(), command.getGameID(), session);
+                case CONNECT ->
+                        connect(command.getAuthToken(), command.getGameID(), session, connectCommand.getState());
                 case MAKE_MOVE -> makeMove(command.getAuthToken(), command.getGameID(), moveCommand.getMove(), session);
                 case LEAVE -> leave(command.getAuthToken(), command.getGameID(), session);
                 case RESIGN -> resign(command.getAuthToken(), command.getGameID(), session);
@@ -49,13 +52,21 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(String authToken, int gameID, Session session) throws IOException {
+    private void connect(String authToken, int gameID, Session session, int state) throws IOException {
         try {
+            String perspective;
+            if (state == 0) {
+                perspective = "white";
+            } else if (state == 1) {
+                perspective = "black";
+            } else {
+                perspective = "observer";
+            }
             if (!gameService.validGameID(gameID)) {
                 throw new IOException("Invalid Game ID");
             }
             connections.add(authToken, gameID, session);
-            var message = String.format("%s has joined as .", userService.getUsername(authToken));
+            var message = String.format("%s has joined as %s.", userService.getUsername(authToken), perspective);
             var notification = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             connections.broadcast(authToken, gameID, notification);
             connections.message(authToken, gameID, new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME,
@@ -99,13 +110,8 @@ public class WebSocketHandler {
                 connections.message(authToken, gameID, gameNotification);
             }
         } catch (Exception e) {
-            if (Objects.equals(e.getMessage(), "Unauthorized")) {
-                var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unauthorized");
-                session.getRemote().sendString(connections.notificationToJson(notification));
-            } else {
-                var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Invalid Move");
-                session.getRemote().sendString(connections.notificationToJson(notification));
-            }
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage());
+            session.getRemote().sendString(connections.notificationToJson(notification));
         }
     }
 
@@ -130,7 +136,7 @@ public class WebSocketHandler {
             connections.broadcast(authToken, gameID, notification);
             connections.message(authToken, gameID, notification);
         } catch (Exception e) {
-            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Disconnect.");
+            var notification = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, "Unable to Resign.");
             connections.message(authToken, gameID, notification);
         }
     }

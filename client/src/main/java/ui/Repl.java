@@ -8,6 +8,7 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 import static ui.EscapeSequences.*;
@@ -30,12 +31,12 @@ public class Repl implements NotificationHandler {
         loggedInClient = new LoggedInClient(serverUrl);
         gamePlayClient = new GamePlayClient(serverUrl, this);
 
-        // Uncomment if wanting to clear database
-        try {
-            startClient.clear();
-        } catch (ResponseException ex) {
-            System.out.println("Failed to clear database");
-        }
+//        // Uncomment if wanting to clear database
+//        try {
+//            startClient.clear();
+//        } catch (ResponseException ex) {
+//            System.out.println("Failed to clear database");
+//        }
     }
 
     public void run() {
@@ -85,6 +86,7 @@ public class Repl implements NotificationHandler {
                     watching = false;
                     team = result.equals("WHITE");
                 }
+                gamePlayClient.setWatching(watching);
                 gameplay();
                 mode = "Chess";
             } else {
@@ -109,7 +111,9 @@ public class Repl implements NotificationHandler {
             printPrompt();
             String line = scanner.nextLine();
             result = gamePlayClient.eval(line, authToken);
-            System.out.println(SET_TEXT_COLOR_RED + result);
+            if (!Objects.equals(result, "")) {
+                System.out.println(SET_TEXT_COLOR_RED + result);
+            }
         }
     }
 

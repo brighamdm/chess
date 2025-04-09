@@ -129,11 +129,14 @@ public class ChessGame {
         clearEnPassant();
         boolean success = false;
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        if (board.getPiece(move.getStartPosition()).getTeamColor() != getTeamTurn()) {
+            throw new InvalidMoveException("Not your turn.");
+        }
         if (validMoves != null && validMoves.contains(move) && board.getPiece(move.getStartPosition()).getTeamColor() == getTeamTurn()) {
             success = board.movePiece(move);
         }
         if (!success || isInCheck(getTeamTurn())) {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Invalid Move.");
         }
         teamTurn = !teamTurn;
     }

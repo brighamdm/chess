@@ -72,17 +72,21 @@ public class GameService implements Service {
             if (game != null && authData != null) {
                 ChessGame.TeamColor team = (Objects.equals(authData.username(), game.whiteUsername())) ? ChessGame.TeamColor.WHITE :
                         ChessGame.TeamColor.BLACK;
-                if (!game.over() && team == game.game().getTeamTurn()) {
-                    ChessGame chessGame = game.game();
-                    try {
-                        chessGame.makeMove(move);
-                    } catch (InvalidMoveException e) {
-                        throw new BadRequestException("Invalid Move");
+                if (!game.over()) {
+                    if (team == game.game().getTeamTurn()) {
+                        ChessGame chessGame = game.game();
+                        try {
+                            chessGame.makeMove(move);
+                        } catch (InvalidMoveException e) {
+                            throw new BadRequestException(e.getMessage());
+                        }
+                        GameData newGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame,
+                                game.game().isInCheckmate(game.game().getTeamTurn()) || game.game().isInStalemate(game.game().getTeamTurn()));
+                        updateGame(newGame);
+                        return newGame;
+                    } else {
+                        throw new BadRequestException("Not your turn.");
                     }
-                    GameData newGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame,
-                            game.game().isInCheckmate(game.game().getTeamTurn()) || game.game().isInStalemate(game.game().getTeamTurn()));
-                    updateGame(newGame);
-                    return newGame;
                 } else {
                     throw new BadRequestException("Chess game is over.");
                 }
